@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Npgsql;
 using ShipIt.Models.ApiModels;

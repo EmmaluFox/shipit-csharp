@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using Npgsql;
 using ShipIt.Models.ApiModels;
 
 namespace ShipIt.Models.DataModels

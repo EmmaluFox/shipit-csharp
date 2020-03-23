@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit;
 using ShipIt.Controllers;
 using ShipIt.Exceptions;
 using ShipIt.Models.ApiModels;
@@ -24,7 +22,7 @@ namespace ShipItTest
         {
             onSetUp();
             var company = new CompanyBuilder().CreateCompany();
-            companyRepository.AddCompanies(new List<Company>() { company });
+            companyRepository.AddCompanies(new List<Company>() {company});
             Assert.AreEqual(companyRepository.GetCompany(company.Gcp).Name, company.Name);
         }
 
@@ -33,7 +31,7 @@ namespace ShipItTest
         {
             onSetUp();
             var companyBuilder = new CompanyBuilder().setGcp(GCP);
-            companyRepository.AddCompanies(new List<Company>() { companyBuilder.CreateCompany() });
+            companyRepository.AddCompanies(new List<Company>() {companyBuilder.CreateCompany()});
             var result = companyController.Get(GCP);
 
             var correctCompany = companyBuilder.CreateCompany();

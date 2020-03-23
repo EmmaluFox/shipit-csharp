@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
+﻿using System.Configuration;
 using System.Data;
-using System.Linq;
-using System.Text;
 using Npgsql;
 using ShipIt.Repositories;
+using NUnit;
 
 namespace ShipItTest
 {
