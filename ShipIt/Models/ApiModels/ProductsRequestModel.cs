@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using ShipIt.Parsers;
 
-namespace ShipIt.Controllers
+namespace ShipIt.Models.ApiModels
 {
     public class ProductsRequestModel
     {

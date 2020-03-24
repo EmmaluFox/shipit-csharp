@@ -1,21 +1,10 @@
-﻿using ShipIt.Models.DataModels;
-using System;
-using System.Text;
+﻿using System.Text;
+using ShipIt.Models.DataModels;
 
 namespace ShipIt.Models.ApiModels
 {
     public class Company
     {
-        public string Gcp { get; set; }
-        public string Name { get; set; }
-        public string Addr2 { get; set; }
-        public string Addr3 { get; set; }
-        public string Addr4 { get; set; }
-        public string PostalCode { get; set; }
-        public string City { get; set; }
-        public string Tel { get; set; }
-        public string Mail { get; set; }
-
         public Company(CompanyDataModel dataModel)
         {
             Gcp = dataModel.Gcp;
@@ -34,19 +23,23 @@ namespace ShipIt.Models.ApiModels
         {
         }
 
+        public string Gcp { get; set; }
+        public string Name { get; set; }
+        public string Addr2 { get; set; }
+        public string Addr3 { get; set; }
+        public string Addr4 { get; set; }
+        public string PostalCode { get; set; }
+        public string City { get; set; }
+        public string Tel { get; set; }
+        public string Mail { get; set; }
+
         public override bool Equals(object obj)
         {
-            if (this == obj)
-            {
-                return true;
-            }
+            if (this == obj) return true;
 
-            if (!(obj is Company))
-            {
-                return false;
-            }
+            if (!(obj is Company)) return false;
 
-            Company company = (Company)obj;
+            var company = (Company) obj;
 
             return Gcp == company.Gcp
                    && Name == company.Name
@@ -63,7 +56,7 @@ namespace ShipIt.Models.ApiModels
         {
             unchecked
             {
-                var hashCode = (Gcp != null ? Gcp.GetHashCode() : 0);
+                var hashCode = Gcp != null ? Gcp.GetHashCode() : 0;
                 hashCode = (hashCode * 397) ^ (Name != null ? Name.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (Addr2 != null ? Addr2.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (Addr3 != null ? Addr3.GetHashCode() : 0);
@@ -76,7 +69,7 @@ namespace ShipIt.Models.ApiModels
             }
         }
 
-        public override String ToString()
+        public override string ToString()
         {
             return new StringBuilder()
                 .AppendFormat("gcp: {0}, ", Gcp)

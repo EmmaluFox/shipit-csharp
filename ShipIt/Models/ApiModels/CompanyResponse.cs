@@ -2,13 +2,16 @@
 {
     public class CompanyResponse : Response
     {
-        public Company Company { get; set; }
         public CompanyResponse(Company company)
         {
             Company = company;
             Success = true;
         }
 
-        public CompanyResponse() { }
+        public CompanyResponse()
+        {
+        }
+
+        public Company Company { get; set; }
     }
 }

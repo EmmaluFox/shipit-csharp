@@ -1,107 +1,107 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ShipIt.Models.ApiModels;
+
 namespace ShipItTest.Builders
 {
     public class CompanyBuilder
     {
-        private String Gcp = "0000346";
-        private String Name = "Robert Bosch Tool Corporation";
-        private String Addr2 = "1800 West Central";
-        private String Addr3 = "";
-        private String Addr4 = "IL";
-        private String PostalCode = "60056";
-        private String City = "Mount Prospect";
-        private String Tel = "(224) 232-2407";
-        private String Mail = "info@gs1us.org";
+        private string _addr2 = "1800 West Central";
+        private string _addr3 = "";
+        private string _addr4 = "IL";
+        private string _city = "Mount Prospect";
+        private string _gcp = "0000346";
+        private string _mail = "info@gs1us.org";
+        private string _name = "Robert Bosch Tool Corporation";
+        private string _postalCode = "60056";
+        private string _tel = "(224) 232-2407";
 
-        public CompanyBuilder setGcp(String gcp)
+        public CompanyBuilder SetGcp(string gcp)
         {
-            this.Gcp = gcp;
+            _gcp = gcp;
             return this;
         }
 
-        public CompanyBuilder setName(String name)
+        public CompanyBuilder SetName(string name)
         {
-            this.Name = name;
+            _name = name;
             return this;
         }
 
-        public CompanyBuilder setAddr2(String addr2)
+        public CompanyBuilder SetAddr2(string addr2)
         {
-            this.Addr2= addr2;
+            _addr2 = addr2;
             return this;
         }
 
-        public CompanyBuilder setAddr3(String addr3)
+        public CompanyBuilder SetAddr3(string addr3)
         {
-            this.Addr3 = addr3;
+            _addr3 = addr3;
             return this;
         }
 
-        public CompanyBuilder setAddr4(String addr4)
+        public CompanyBuilder SetAddr4(string addr4)
         {
-            this.Addr4 = addr4;
+            _addr4 = addr4;
             return this;
         }
 
-        public CompanyBuilder setPostalCode(String postalCode)
+        public CompanyBuilder SetPostalCode(string postalCode)
         {
-            this.PostalCode = postalCode;
+            _postalCode = postalCode;
             return this;
         }
 
-        public CompanyBuilder setCity(String city)
+        public CompanyBuilder SetCity(string city)
         {
-            this.City = city;
+            _city = city;
             return this;
         }
 
-        public CompanyBuilder setTel(String tel)
+        public CompanyBuilder SetTel(string tel)
         {
-            this.Tel = tel;
+            _tel = tel;
             return this;
         }
 
-        public CompanyBuilder setMail(String mail)
+        public CompanyBuilder SetMail(string mail)
         {
-            this.Mail = mail;
+            _mail = mail;
             return this;
         }
 
         public Company CreateCompany()
         {
-            return new Company()
+            return new Company
             {
-                Gcp = this.Gcp,
-                Name = this.Name,
-                Addr2 = this.Addr2,
-                Addr3 = this.Addr3,
-                Addr4 = this.Addr4,
-                PostalCode = this.PostalCode,
-                City = this.City,
-                Tel = this.Tel,
-                Mail = this.Mail
+                Gcp = _gcp,
+                Name = _name,
+                Addr2 = _addr2,
+                Addr3 = _addr3,
+                Addr4 = _addr4,
+                PostalCode = _postalCode,
+                City = _city,
+                Tel = _tel,
+                Mail = _mail
             };
         }
 
         public AddCompaniesRequest CreateAddCompaniesRequest()
         {
-            return new AddCompaniesRequest()
+            return new AddCompaniesRequest
             {
-                companies = new List<Company>()
+                Companies = new List<Company>
                 {
-                    new Company()
+                    new Company
                     {
-                        Gcp = this.Gcp,
-                        Name = this.Name,
-                        Addr2 = this.Addr2,
-                        Addr3 = this.Addr3,
-                        Addr4 = this.Addr4,
-                        PostalCode = this.PostalCode,
-                        City = this.City,
-                        Tel = this.Tel,
-                        Mail = this.Mail
+                        Gcp = _gcp,
+                        Name = _name,
+                        Addr2 = _addr2,
+                        Addr3 = _addr3,
+                        Addr4 = _addr4,
+                        PostalCode = _postalCode,
+                        City = _city,
+                        Tel = _tel,
+                        Mail = _mail
                     }
                 }
             };

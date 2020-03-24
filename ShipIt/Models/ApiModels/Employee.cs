@@ -6,26 +6,12 @@ namespace ShipIt.Models.ApiModels
 {
     public class Employee
     {
-        public string Name { get; set; }
-        public int WarehouseId { get; set; }
-        public EmployeeRole role { get; set; }
-        public string ext { get; set; }
-
         public Employee(EmployeeDataModel dataModel)
         {
             Name = dataModel.Name;
             WarehouseId = dataModel.WarehouseId;
-            role = MapDatabaseRoleToApiRole(dataModel.Role);
-            ext = dataModel.Ext;
-        }
-
-        private EmployeeRole MapDatabaseRoleToApiRole(string databaseRole)
-        {
-            if (databaseRole == DataBaseRoles.Cleaner) return EmployeeRole.CLEANER;
-            if (databaseRole == DataBaseRoles.Manager) return EmployeeRole.MANAGER;
-            if (databaseRole == DataBaseRoles.OperationsManager) return EmployeeRole.OPERATIONS_MANAGER;
-            if (databaseRole == DataBaseRoles.Picker) return EmployeeRole.PICKER;
-            throw new ArgumentOutOfRangeException("DatabaseRole");
+            Role = MapDatabaseRoleToApiRole(dataModel.Role);
+            Ext = dataModel.Ext;
         }
 
         //Empty constructor needed for Xml serialization
@@ -33,14 +19,28 @@ namespace ShipIt.Models.ApiModels
         {
         }
 
-        public override String ToString()
+        public string Name { get; set; }
+        public int WarehouseId { get; set; }
+        public EmployeeRole Role { get; set; }
+        public string Ext { get; set; }
+
+        private EmployeeRole MapDatabaseRoleToApiRole(string databaseRole)
+        {
+            if (databaseRole == DataBaseRoles.Cleaner) return EmployeeRole.Cleaner;
+            if (databaseRole == DataBaseRoles.Manager) return EmployeeRole.Manager;
+            if (databaseRole == DataBaseRoles.OperationsManager) return EmployeeRole.OperationsManager;
+            if (databaseRole == DataBaseRoles.Picker) return EmployeeRole.Picker;
+            throw new ArgumentOutOfRangeException("databaseRole");
+        }
+
+        public override string ToString()
         {
             return new StringBuilder()
-                    .AppendFormat("name: {0}, ", Name)
-                    .AppendFormat("warehouseId: {0}, ", WarehouseId)
-                    .AppendFormat("role: {0}, ", role)
-                    .AppendFormat("ext: {0}", ext)
-                    .ToString();
+                .AppendFormat("name: {0}, ", Name)
+                .AppendFormat("warehouseId: {0}, ", WarehouseId)
+                .AppendFormat("role: {0}, ", Role)
+                .AppendFormat("ext: {0}", Ext)
+                .ToString();
         }
     }
 }

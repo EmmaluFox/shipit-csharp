@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace ShipIt.Validators
 {
     public abstract class BaseValidator<T>
     {
-        List<string> errors;
+        private readonly List<string> _errors;
 
         protected BaseValidator()
         {
-            errors = new List<string>();
+            _errors = new List<string>();
         }
 
         public void Validate(T target)
@@ -19,107 +18,85 @@ namespace ShipIt.Validators
 
         protected abstract void DoValidation(T target);
 
-        void addError(String error)
+        private void AddError(string error)
         {
-            errors.Add(error);
+            _errors.Add(error);
         }
 
-        void addErrors(List<String> errors)
+        private void AddErrors(List<string> errors)
         {
-            this.errors.AddRange(errors);
+            this._errors.AddRange(errors);
         }
 
-/**
+        /**
  * Object validators
  */
-
-        void assertNotNull(String fieldName, Object value)
+        private void AssertNotNull(string fieldName, object value)
         {
-            if (value == null)
-            {
-                addError(string.Format("Field {0} cannot be null", fieldName));
-            }
+            if (value == null) AddError(string.Format("Field {0} cannot be null", fieldName));
         }
 
-/**
+        /**
  * String validators
  */
-
-        protected void assertNotBlank(string fieldName, string value)
+        protected void AssertNotBlank(string fieldName, string value)
         {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                addError(string.Format("Field {0} cannot be blank", fieldName));
-            }
+            if (string.IsNullOrWhiteSpace(value)) AddError(string.Format("Field {0} cannot be blank", fieldName));
         }
 
         protected void AssertNumeric(string fieldName, string value)
         {
             double d;
-            if (!double.TryParse(value, out d))
-            {
-                addError(string.Format("Field {0} must be numeric", fieldName));
-            }
+            if (!double.TryParse(value, out d)) AddError(string.Format("Field {0} must be numeric", fieldName));
         }
 
-        protected void AssertMaxLength(String fieldName, string value, int maxLength)
+        protected void AssertMaxLength(string fieldName, string value, int maxLength)
         {
             if (value.Length > maxLength)
-            {
-                addError(string.Format("Field {0} must be shorter than {1} characters", fieldName, maxLength));
-            }
+                AddError(string.Format("Field {0} must be shorter than {1} characters", fieldName, maxLength));
         }
 
         protected void AssertExactLength(string fieldName, string value, int exactLength)
         {
             if (value.Length != exactLength)
-            {
-                addError(string.Format("Field {0} must be exactly {1} characters", fieldName, exactLength));
-            }
+                AddError(string.Format("Field {0} must be exactly {1} characters", fieldName, exactLength));
         }
 
-/**
+        /**
  * Numeric validators
  */
-
         protected void AssertNonNegative(string fieldName, int value)
         {
-            if (value < 0)
-            {
-                addError(string.Format("Field {0} must be non-negative", fieldName));
-            }
+            if (value < 0) AddError(string.Format("Field {0} must be non-negative", fieldName));
         }
 
         protected void AssertNonNegative(string fieldName, float value)
         {
-            if (value < 0)
-            {
-                addError(string.Format("Field {0} must be non-negative", fieldName));
-            }
+            if (value < 0) AddError(string.Format("Field {0} must be non-negative", fieldName));
         }
 
-/**
+        /**
  * Specific validators
  */
-
         protected void ValidateGtin(string value)
         {
-            assertNotBlank("gtin", value);
+            AssertNotBlank("gtin", value);
             AssertNumeric("gtin", value);
             AssertMaxLength("gtin", value, 13);
         }
 
-        protected void ValidateGcp(String value)
+        protected void ValidateGcp(string value)
         {
-            assertNotBlank("gcp", value);
+            AssertNotBlank("gcp", value);
             AssertNumeric("gcp", value);
             AssertMaxLength("gcp", value, 13);
         }
 
-        protected void validateWarehouseId(int warehouseId)
+        protected void ValidateWarehouseId(int warehouseId)
         {
             AssertNonNegative("warehouseId", warehouseId);
         }
+
         /*
     protected void validateOrderLines(List<OrderLine> orderLines)
     {

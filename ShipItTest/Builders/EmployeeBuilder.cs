@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ShipIt.Models.ApiModels;
 using ShipIt.Models.DataModels;
 
@@ -7,68 +6,69 @@ namespace ShipItTest.Builders
 {
     public class EmployeeBuilder
     {
-        private String Name = "Gissell Sadeem";
-        private int WarehouseId = 1;
-        private EmployeeRole Role = EmployeeRole.OPERATIONS_MANAGER;
-        private String Ext = "73996";
+        private string _ext = "73996";
+        private string _name = "Gissell Sadeem";
+        private EmployeeRole _role = EmployeeRole.OperationsManager;
+        private int _warehouseId = 1;
 
-        public EmployeeBuilder setName(String name)
+        public EmployeeBuilder SetName(string name)
         {
-            this.Name = name;
+            _name = name;
             return this;
         }
 
-        public EmployeeBuilder setWarehouseId(int warehouseId)
+        public EmployeeBuilder SetWarehouseId(int warehouseId)
         {
-            this.WarehouseId = warehouseId;
+            _warehouseId = warehouseId;
             return this;
         }
 
-        public EmployeeBuilder setRole(EmployeeRole role)
+        public EmployeeBuilder SetRole(EmployeeRole role)
         {
-            this.Role = role;
+            _role = role;
             return this;
         }
 
-        public EmployeeBuilder setExt(String ext)
+        public EmployeeBuilder SetExt(string ext)
         {
-            this.Ext = ext;
+            _ext = ext;
             return this;
         }
 
         public EmployeeDataModel CreateEmployeeDataModel()
         {
-            return new EmployeeDataModel()
+            return new EmployeeDataModel
             {
-                Name = this.Name,
-                WarehouseId = this.WarehouseId,
-                Role = this.Role.ToString(),
-                Ext = this.Ext
+                Name = _name,
+                WarehouseId = _warehouseId,
+                Role = _role.ToString(),
+                Ext = _ext
             };
         }
 
         public Employee CreateEmployee()
         {
-            return new Employee() {
-                Name = this.Name,
-                WarehouseId = this.WarehouseId,
-                role = this.Role,
-                ext = this.Ext
+            return new Employee
+            {
+                Name = _name,
+                WarehouseId = _warehouseId,
+                Role = _role,
+                Ext = _ext
             };
         }
 
         public AddEmployeesRequest CreateAddEmployeesRequest()
         {
-            return new AddEmployeesRequest()
+            return new AddEmployeesRequest
             {
-                Employees = new List<Employee>()
+                Employees = new List<Employee>
                 {
-                    new Employee()
+                    new Employee
                     {
-                        Name = this.Name,
-                        WarehouseId = this.WarehouseId,
-                        role = this.Role,
-                        ext = this.Ext
+                        Name = _name,
+                        WarehouseId = _warehouseId,
+                        Role = _role,
+                        Ext = _ext
                     }
                 }
             };

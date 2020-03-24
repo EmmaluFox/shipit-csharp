@@ -1,4 +1,4 @@
-﻿namespace ShipIt.Parsers
+﻿namespace ShipIt.Models.ApiModels
 {
     public class ProductRequestModel
     {

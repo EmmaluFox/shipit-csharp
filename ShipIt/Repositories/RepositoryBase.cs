@@ -16,7 +16,7 @@ namespace ShipIt.Repositories
 
         protected long QueryForLong(string sqlString)
         {
-            using (IDbConnection connection = Connection)
+            using (var connection = Connection)
             {
                 var command = connection.CreateCommand();
                 command.CommandText = sqlString;
@@ -32,47 +32,39 @@ namespace ShipIt.Repositories
                 {
                     reader.Close();
                 }
-            };
+            }
         }
-        
+
         protected void RunSingleQuery(string sql, string noResultsExceptionMessage, params NpgsqlParameter[] parameters)
         {
-            using (IDbConnection connection = Connection)
+            using (var connection = Connection)
             {
                 var command = connection.CreateCommand();
                 command.CommandText = sql;
-                foreach (var parameter in parameters)
-                {
-                    command.Parameters.Add(parameter);
-                }
+                foreach (var parameter in parameters) command.Parameters.Add(parameter);
                 connection.Open();
                 var reader = command.ExecuteReader();
 
                 try
                 {
-                    if (reader.RecordsAffected != 1)
-                    {
-                        throw new NoSuchEntityException(noResultsExceptionMessage);
-                    }
+                    if (reader.RecordsAffected != 1) throw new NoSuchEntityException(noResultsExceptionMessage);
                     reader.Read();
                 }
                 finally
                 {
                     reader.Close();
                 }
-            };
+            }
+
         }
 
         protected int RunSingleQueryAndReturnRecordsAffected(string sql, params NpgsqlParameter[] parameters)
         {
-            using (IDbConnection connection = Connection)
+            using (var connection = Connection)
             {
                 var command = connection.CreateCommand();
                 command.CommandText = sql;
-                foreach (var parameter in parameters)
-                {
-                    command.Parameters.Add(parameter);
-                }
+                foreach (var parameter in parameters) command.Parameters.Add(parameter);
                 connection.Open();
                 var reader = command.ExecuteReader();
 
@@ -84,61 +76,54 @@ namespace ShipIt.Repositories
                 {
                     reader.Close();
                 }
+
                 return reader.RecordsAffected;
-            };
+            }
+
         }
 
-        protected TDataModel RunSingleGetQuery<TDataModel>(string sql, Func<IDataReader, TDataModel> mapToDataModel, string noResultsExceptionMessage, params NpgsqlParameter[] parameters)
+        protected TDataModel RunSingleGetQuery<TDataModel>(string sql, Func<IDataReader, TDataModel> mapToDataModel,
+            string noResultsExceptionMessage, params NpgsqlParameter[] parameters)
         {
             return RunGetQuery(sql, mapToDataModel, noResultsExceptionMessage, parameters).Single();
         }
 
-        protected IEnumerable<TDataModel> RunGetQuery<TDataModel>(string sql, Func<IDataReader, TDataModel> mapToDataModel, string noResultsExceptionMessage, params NpgsqlParameter[] parameters)
+        protected IEnumerable<TDataModel> RunGetQuery<TDataModel>(string sql,
+            Func<IDataReader, TDataModel> mapToDataModel, string noResultsExceptionMessage,
+            params NpgsqlParameter[] parameters)
         {
-            using (IDbConnection connection = Connection)
+            using (var connection = Connection)
             {
                 var command = connection.CreateCommand();
                 command.CommandText = sql;
                 if (parameters != null)
-                {
                     foreach (var parameter in parameters)
-                    {
                         command.Parameters.Add(parameter);
-                    }
-                }
                 connection.Open();
                 var reader = command.ExecuteReader();
 
                 try
                 {
-                    if (!reader.Read())
-                    {
-                        throw new NoSuchEntityException(noResultsExceptionMessage);
-                    }
+                    if (!reader.Read()) throw new NoSuchEntityException(noResultsExceptionMessage);
                     yield return mapToDataModel(reader);
 
-                    while (reader.Read())
-                    {
-                        yield return mapToDataModel(reader);
-                    }
+                    while (reader.Read()) yield return mapToDataModel(reader);
                 }
                 finally
                 {
                     reader.Close();
                 }
-            };
+            }
+
         }
 
         protected void RunQuery(string sql, params NpgsqlParameter[] parameters)
         {
-            using (IDbConnection connection = Connection)
+            using (var connection = Connection)
             {
                 var command = connection.CreateCommand();
                 command.CommandText = sql;
-                foreach (var parameter in parameters)
-                {
-                    command.Parameters.Add(parameter);
-                }
+                foreach (var parameter in parameters) command.Parameters.Add(parameter);
                 connection.Open();
                 var reader = command.ExecuteReader();
 
@@ -150,12 +135,12 @@ namespace ShipIt.Repositories
                 {
                     reader.Close();
                 }
-            };
+            }
         }
 
         protected void RunTransaction(string sql, List<NpgsqlParameter[]> parametersList)
         {
-            using (IDbConnection connection = Connection)
+            using (var connection = Connection)
             {
                 connection.Open();
                 var command = connection.CreateCommand();
@@ -170,21 +155,14 @@ namespace ShipIt.Repositories
                         command.CommandText = sql;
                         command.Parameters.Clear();
 
-                        foreach (var parameter in parameters)
-                        {
-                            command.Parameters.Add(parameter);
-                        }
+                        foreach (var parameter in parameters) command.Parameters.Add(parameter);
 
                         recordsAffected.Add(command.ExecuteNonQuery());
                     }
 
-                    for (int i = 0; i < recordsAffected.Count; i++)
-                    {
+                    for (var i = 0; i < recordsAffected.Count; i++)
                         if (recordsAffected[i] == 0)
-                        {
                             throw new Exception();
-                        }
-                    }
 
                     transaction.Commit();
                 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 
 namespace ShipIt.Models.ApiModels
@@ -9,7 +8,7 @@ namespace ShipIt.Models.ApiModels
         public int WarehouseId { get; set; }
         public IEnumerable<OrderLine> OrderLines { get; set; }
 
-        public override String ToString()
+        public override string ToString()
         {
             return new StringBuilder()
                 .AppendFormat("warehouseId: {0}, ", WarehouseId)

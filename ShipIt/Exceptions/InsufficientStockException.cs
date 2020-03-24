@@ -1,17 +1,11 @@
 ﻿namespace ShipIt.Exceptions
 {
-    public class InsufficientStockException: ClientVisibleException
+    public class InsufficientStockException : ClientVisibleException
     {
-        private ErrorCode _errorCode;
-
-        public InsufficientStockException(string message) : base(message, ErrorCode.INSUFFICIENT_STOCK)
+        public InsufficientStockException(string message) : base(message, ErrorCode.InsufficientStock)
         {
         }
 
-        public override ErrorCode ErrorCode
-        {
-            get { return _errorCode; }
-            set { _errorCode = value; }
-        }
+        public override ErrorCode ErrorCode { get; set; }
     }
 }
