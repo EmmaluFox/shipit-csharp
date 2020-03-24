@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using ShipIt.Models.ApiModels;
-
 namespace ShipItTest.Builders
 {
     public class CompanyBuilder
