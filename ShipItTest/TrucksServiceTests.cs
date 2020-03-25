@@ -10,7 +10,7 @@ namespace ShipItTest
 {
     public class TrucksServiceTests
     {
-        private readonly ProductDataModel TestProduct = new ProductDataModel
+        private readonly ProductDataModel _testProduct = new ProductDataModel
         {
             Id = 17,
             Weight = 100,
@@ -26,7 +26,7 @@ namespace ShipItTest
         {
             _productRepository = A.Fake<IProductRepository>();
             _trucksService = new TrucksService(_productRepository);
-            A.CallTo(() => _productRepository.GetProductById(17)).Returns(TestProduct);
+            A.CallTo(() => _productRepository.GetProductById(17)).Returns(_testProduct);
         }
 
         [Test]

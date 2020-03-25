@@ -33,26 +33,28 @@ namespace ShipIt.Services
             return outboundOrder;
         }
 
-
-        public static IDbConnection CreateSqlConnection()
-        {
-            return new NpgsqlConnection(ConnectionHelper.GetConnectionString());
-        }
-
-        public List<Case> GetFilledCases(List<StockAlteration> lineItems)
+        private List<Case> GetFilledCases(List<StockAlteration> lineItems)
         {
             var cases = new List<Case>();
+            var initialCase = new Case();
+            cases.Add(initialCase);
             foreach (var item in lineItems)
             {
                 var newProduct = new Product(_productRepository.GetProductById(item.ProductId));
+                if (initialCase.Gtin == null)
+                {
+                    initialCase.Gtin = newProduct.Gtin;
+                }
                 foreach (var caseItem in cases)
                     if (newProduct.Gtin == caseItem.Gtin)
                     {
                         caseItem.Quantity += item.Quantity;
+                        caseItem.Name = newProduct.Name;
+                        caseItem.WeightPerItem = newProduct.Weight;
                     }
                     else
                     {
-                        var newCase = new Case {Gtin = newProduct.Gtin, Quantity = item.Quantity};
+                        var newCase = new Case {Gtin = newProduct.Gtin, Quantity = item.Quantity, Name = newProduct.Name, WeightPerItem = newProduct.Weight};
                         cases.Add(newCase);
                     }
             }
