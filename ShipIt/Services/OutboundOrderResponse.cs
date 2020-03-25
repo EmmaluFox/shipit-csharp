@@ -12,8 +12,8 @@ namespace ShipIt.Services
     public class Truck
     {
         public List<Case> Cases { get; set; }
-
         public double TotalWeight => Cases.Sum(batch => batch.TotalWeight);
+        public int Id { get; set; }
     }
 
     public class Case

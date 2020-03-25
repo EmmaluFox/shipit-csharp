@@ -41,5 +41,18 @@ namespace ShipItTest
             Assert.AreEqual(1, trucks.NumberOfTrucks);
             Assert.AreEqual(300, trucks.Trucks[0].TotalWeight);
         }
+        
+        [Test]
+        public void NoSingleTruckTakesMoreThan2000Kg()
+        {
+            var alterations = new List<StockAlteration>
+            {
+                new StockAlteration(17, 61)
+            };
+
+            var trucks2 = _trucksService.GetTrucksForOrder(alterations);
+            Assert.AreEqual(4, trucks2.NumberOfTrucks);
+            Assert.AreEqual( 2000, trucks2.Trucks[2].TotalWeight);
+        }
     }
 }
