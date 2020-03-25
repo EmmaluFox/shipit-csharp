@@ -5,7 +5,6 @@ using ShipIt.Controllers;
 using ShipIt.Exceptions;
 using ShipIt.Models.ApiModels;
 using ShipIt.Models.DataModels;
-using ShipIt.Parsers;
 using ShipIt.Repositories;
 using ShipItTest.Builders;
 
@@ -14,20 +13,19 @@ namespace ShipItTest
     [TestClass]
     public class ProductControllerTests : AbstractBaseTest
     {
-        ProductController productController = new ProductController(new ProductRepository());
-        ProductRepository productRepository = new ProductRepository();
-
         private const int WAREHOUSE_ID = 1;
 
         // private static readonly Employee EMPLOYEE = new EmployeeBuilder().setWarehouseId(WAREHOUSE_ID).CreateEmployee();
         private const string GTIN = "0000346374230";
+        private readonly ProductController productController = new ProductController(new ProductRepository());
+        private readonly ProductRepository productRepository = new ProductRepository();
 
         [TestMethod]
         public void TestRoundtripProductRepository()
         {
             onSetUp();
             var product = new ProductBuilder().CreateProductDatabaseModel();
-            productRepository.AddProducts(new List<ProductDataModel>() {product});
+            productRepository.AddProducts(new List<ProductDataModel> {product});
             Assert.AreEqual(productRepository.GetProductByGtin(product.Gtin).Name, product.Name);
             Assert.AreEqual(productRepository.GetProductByGtin(product.Gtin).Gtin, product.Gtin);
         }
@@ -37,7 +35,7 @@ namespace ShipItTest
         {
             onSetUp();
             var productBuilder = new ProductBuilder().setGtin(GTIN);
-            productRepository.AddProducts(new List<ProductDataModel>() {productBuilder.CreateProductDatabaseModel()});
+            productRepository.AddProducts(new List<ProductDataModel> {productBuilder.CreateProductDatabaseModel()});
             var result = productController.Get(GTIN);
 
             var correctProduct = productBuilder.CreateProduct();
@@ -79,7 +77,7 @@ namespace ShipItTest
         {
             onSetUp();
             var productBuilder = new ProductBuilder().setGtin(GTIN);
-            productRepository.AddProducts(new List<ProductDataModel>() {productBuilder.CreateProductDatabaseModel()});
+            productRepository.AddProducts(new List<ProductDataModel> {productBuilder.CreateProductDatabaseModel()});
             var productRequest = productBuilder.CreateProductRequest();
 
             try
@@ -116,7 +114,7 @@ namespace ShipItTest
         {
             onSetUp();
             var productBuilder = new ProductBuilder().setGtin(GTIN);
-            productRepository.AddProducts(new List<ProductDataModel>() { productBuilder.CreateProductDatabaseModel() });
+            productRepository.AddProducts(new List<ProductDataModel> {productBuilder.CreateProductDatabaseModel()});
 
             productController.Discontinue(GTIN);
             var result = productController.Get(GTIN);

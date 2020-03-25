@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Web.Http;
+using log4net;
 using ShipIt.Exceptions;
 using ShipIt.Models.ApiModels;
 using ShipIt.Models.DataModels;
@@ -12,7 +14,7 @@ namespace ShipIt.Controllers
 {
     public class ProductController : ApiController
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly IProductRepository productRepository;
 
@@ -23,10 +25,7 @@ namespace ShipIt.Controllers
 
         public ProductResponse Get(string gtin)
         {
-            if (gtin == null)
-            {
-                throw new MalformedRequestException("Unable to parse gtin from request parameters");
-            }
+            if (gtin == null) throw new MalformedRequestException("Unable to parse gtin from request parameters");
 
             log.Info("Looking up product by gtin: " + gtin);
 
@@ -37,7 +36,7 @@ namespace ShipIt.Controllers
             return new ProductResponse(product);
         }
 
-        public Response Post([FromBody]ProductsRequestModel requestModel)
+        public Response Post([FromBody] ProductsRequestModel requestModel)
         {
             var parsedProducts = new List<Product>();
 
@@ -52,19 +51,16 @@ namespace ShipIt.Controllers
 
             var dataProducts = parsedProducts.Select(p => new ProductDataModel(p));
             productRepository.AddProducts(dataProducts);
-            
+
             log.Debug("Products added successfully");
 
-            return new Response() { Success = true };
+            return new Response {Success = true};
         }
 
         [HttpPatch]
         public Response Discontinue(string gtin)
         {
-            if (gtin == null)
-            {
-                throw new MalformedRequestException("Unable to parse gtin from request parameters");
-            }
+            if (gtin == null) throw new MalformedRequestException("Unable to parse gtin from request parameters");
 
             log.Info("Discontinuing up product by gtin: " + gtin);
 
@@ -72,7 +68,7 @@ namespace ShipIt.Controllers
 
             log.Info("Discontinued product: " + gtin);
 
-            return new Response() { Success = true };
+            return new Response {Success = true};
         }
     }
 }

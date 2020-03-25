@@ -20,12 +20,11 @@ namespace ShipIt
             HttpControllerDescriptor controllerDescriptor,
             Type controllerType)
         {
-
-            var controller = (IHttpController)this.container.Resolve(controllerType);
+            var controller = (IHttpController) container.Resolve(controllerType);
 
             request.RegisterForDispose(
                 new Release(
-                    () => this.container.Release(controller)));
+                    () => container.Release(controller)));
 
             return controller;
         }
@@ -41,10 +40,8 @@ namespace ShipIt
 
             public void Dispose()
             {
-                this.release();
+                release();
             }
         }
     }
 }
-
-

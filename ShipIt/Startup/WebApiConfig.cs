@@ -10,17 +10,17 @@ namespace ShipIt
             config.Routes.MapHttpRoute(
                 "ApiRoot",
                 "Test/{id}",
-                new { controller = "Product", id = RouteParameter.Optional }
+                new {controller = "Product", id = RouteParameter.Optional}
             );
             config.Routes.MapHttpRoute(
                 "DefaultApi",
                 "{controller}/{id}",
-                new { id = RouteParameter.Optional }
+                new {id = RouteParameter.Optional}
             );
             config.Routes.MapHttpRoute(
                 "AppLaunch",
                 "",
-                new { controller = "Status" }
+                new {controller = "Status"}
             );
             config.Filters.Add(new ShipItExceptionFilterAttribute());
             config.Formatters.XmlFormatter.UseXmlSerializer = true;

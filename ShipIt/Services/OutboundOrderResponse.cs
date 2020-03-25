@@ -1,4 +1,4 @@
-﻿﻿using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace ShipIt.Services
@@ -22,9 +22,6 @@ namespace ShipIt.Services
         public string Name { get; set; }
         public int Quantity { get; set; }
         public double WeightPerItem { get; set; }
-        public double TotalWeight => WeightPerItem*Quantity;
+        public double TotalWeight => WeightPerItem * Quantity;
     }
-    
-    
-                                                                       
 }

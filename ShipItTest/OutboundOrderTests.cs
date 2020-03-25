@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ShipIt.Controllers;
 using ShipIt.Exceptions;
@@ -15,30 +12,31 @@ namespace ShipItTest
     [TestClass]
     public class OutboundOrderControllerTests : AbstractBaseTest
     {
-        OutboundOrderController outboundOrderController = new OutboundOrderController(
+        private const string GTIN = "0000";
+
+        private static readonly Employee EMPLOYEE = new EmployeeBuilder().CreateEmployee();
+        private static readonly Company COMPANY = new CompanyBuilder().CreateCompany();
+        private static readonly int WAREHOUSE_ID = EMPLOYEE.WarehouseId;
+        private readonly CompanyRepository companyRepository = new CompanyRepository();
+        private readonly EmployeeRepository employeeRepository = new EmployeeRepository();
+
+        private readonly OutboundOrderController outboundOrderController = new OutboundOrderController(
             new StockRepository(),
             new ProductRepository()
         );
-        StockRepository stockRepository = new StockRepository();
-        CompanyRepository companyRepository = new CompanyRepository();
-        ProductRepository productRepository = new ProductRepository();
-        EmployeeRepository employeeRepository = new EmployeeRepository();
-
-        private static Employee EMPLOYEE = new EmployeeBuilder().CreateEmployee();
-        private static Company COMPANY = new CompanyBuilder().CreateCompany();
-        private static readonly int WAREHOUSE_ID = EMPLOYEE.WarehouseId;
 
         private Product product;
         private int productId;
-        private const string GTIN = "0000";
+        private readonly ProductRepository productRepository = new ProductRepository();
+        private readonly StockRepository stockRepository = new StockRepository();
 
         public new void onSetUp()
         {
             base.onSetUp();
-            employeeRepository.AddEmployees(new List<Employee>() { EMPLOYEE });
-            companyRepository.AddCompanies(new List<Company>() { COMPANY });
+            employeeRepository.AddEmployees(new List<Employee> {EMPLOYEE});
+            companyRepository.AddCompanies(new List<Company> {COMPANY});
             var productDataModel = new ProductBuilder().setGtin(GTIN).CreateProductDatabaseModel();
-            productRepository.AddProducts(new List<ProductDataModel>() { productDataModel });
+            productRepository.AddProducts(new List<ProductDataModel> {productDataModel});
             product = new Product(productRepository.GetProductByGtin(GTIN));
             productId = product.Id;
         }
@@ -47,13 +45,13 @@ namespace ShipItTest
         public void TestOutboundOrder()
         {
             onSetUp();
-            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, 10) });
-            var outboundOrder = new OutboundOrderRequestModel()
+            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration> {new StockAlteration(productId, 10)});
+            var outboundOrder = new OutboundOrderRequestModel
             {
                 WarehouseId = WAREHOUSE_ID,
-                OrderLines = new List<OrderLine>()
+                OrderLines = new List<OrderLine>
                 {
-                    new OrderLine()
+                    new OrderLine
                     {
                         gtin = GTIN,
                         quantity = 3
@@ -63,7 +61,8 @@ namespace ShipItTest
 
             outboundOrderController.Post(outboundOrder);
 
-            var stock = stockRepository.GetStockByWarehouseAndProductIds(WAREHOUSE_ID, new List<int>() { productId })[productId];
+            var stock =
+                stockRepository.GetStockByWarehouseAndProductIds(WAREHOUSE_ID, new List<int> {productId})[productId];
             Assert.AreEqual(stock.held, 7);
         }
 
@@ -71,13 +70,13 @@ namespace ShipItTest
         public void TestOutboundOrderInsufficientStock()
         {
             onSetUp();
-            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, 10) });
-            var outboundOrder = new OutboundOrderRequestModel()
+            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration> {new StockAlteration(productId, 10)});
+            var outboundOrder = new OutboundOrderRequestModel
             {
                 WarehouseId = WAREHOUSE_ID,
-                OrderLines = new List<OrderLine>()
+                OrderLines = new List<OrderLine>
                 {
-                    new OrderLine()
+                    new OrderLine
                     {
                         gtin = GTIN,
                         quantity = 11
@@ -101,20 +100,21 @@ namespace ShipItTest
         {
             onSetUp();
             var noStockGtin = GTIN + "XYZ";
-            productRepository.AddProducts(new List<ProductDataModel>() { new ProductBuilder().setGtin(noStockGtin).CreateProductDatabaseModel() });
-            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, 10) });
+            productRepository.AddProducts(new List<ProductDataModel>
+                {new ProductBuilder().setGtin(noStockGtin).CreateProductDatabaseModel()});
+            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration> {new StockAlteration(productId, 10)});
 
-            var outboundOrder = new OutboundOrderRequestModel()
+            var outboundOrder = new OutboundOrderRequestModel
             {
                 WarehouseId = WAREHOUSE_ID,
-                OrderLines = new List<OrderLine>()
+                OrderLines = new List<OrderLine>
                 {
-                    new OrderLine()
+                    new OrderLine
                     {
                         gtin = GTIN,
                         quantity = 8
                     },
-                    new OrderLine()
+                    new OrderLine
                     {
                         gtin = noStockGtin,
                         quantity = 1000
@@ -140,17 +140,17 @@ namespace ShipItTest
             onSetUp();
             var badGtin = GTIN + "XYZ";
 
-            var outboundOrder = new OutboundOrderRequestModel()
+            var outboundOrder = new OutboundOrderRequestModel
             {
                 WarehouseId = WAREHOUSE_ID,
-                OrderLines = new List<OrderLine>()
+                OrderLines = new List<OrderLine>
                 {
-                    new OrderLine()
+                    new OrderLine
                     {
                         gtin = GTIN,
                         quantity = 1
                     },
-                    new OrderLine()
+                    new OrderLine
                     {
                         gtin = badGtin,
                         quantity = 1
@@ -173,18 +173,18 @@ namespace ShipItTest
         public void TestOutboundOrderDuplicateGtins()
         {
             onSetUp();
-            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, 10) });
-            var outboundOrder = new OutboundOrderRequestModel()
+            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration> {new StockAlteration(productId, 10)});
+            var outboundOrder = new OutboundOrderRequestModel
             {
                 WarehouseId = WAREHOUSE_ID,
-                OrderLines = new List<OrderLine>()
+                OrderLines = new List<OrderLine>
                 {
-                    new OrderLine()
+                    new OrderLine
                     {
                         gtin = GTIN,
                         quantity = 1
                     },
-                    new OrderLine()
+                    new OrderLine
                     {
                         gtin = GTIN,
                         quantity = 1

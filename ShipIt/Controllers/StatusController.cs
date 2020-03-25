@@ -15,12 +15,13 @@ namespace ShipIt.Controllers
 
     public class StatusController : ApiController
     {
-        private IEmployeeRepository employeeRepository;
-        private ICompanyRepository companyRepository;
-        private IProductRepository productRepository;
-        private IStockRepository stockRepository;
+        private readonly ICompanyRepository companyRepository;
+        private readonly IEmployeeRepository employeeRepository;
+        private readonly IProductRepository productRepository;
+        private readonly IStockRepository stockRepository;
 
-        public StatusController(IEmployeeRepository employeeRepository, ICompanyRepository companyRepository, IProductRepository productRepository, IStockRepository stockRepository)
+        public StatusController(IEmployeeRepository employeeRepository, ICompanyRepository companyRepository,
+            IProductRepository productRepository, IStockRepository stockRepository)
         {
             this.employeeRepository = employeeRepository;
             this.stockRepository = stockRepository;
@@ -31,7 +32,7 @@ namespace ShipIt.Controllers
         // GET api/status
         public Status Get()
         {
-            return new Status()
+            return new Status
             {
                 EmployeeCount = employeeRepository.GetCount(),
                 ItemsTracked = stockRepository.GetTrackedItemsCount(),

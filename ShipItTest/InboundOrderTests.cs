@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ShipIt.Controllers;
 using ShipIt.Exceptions;
@@ -17,33 +13,34 @@ namespace ShipItTest
     [TestClass]
     public class InboundOrderControllerTests : AbstractBaseTest
     {
-        InboundOrderController inboundOrderController = new InboundOrderController(
+        private const string GTIN = "0000";
+
+        private static readonly Employee OPS_MANAGER = new EmployeeBuilder().CreateEmployee();
+        private static readonly Company COMPANY = new CompanyBuilder().CreateCompany();
+        private static readonly int WAREHOUSE_ID = OPS_MANAGER.WarehouseId;
+        private static readonly string GCP = COMPANY.Gcp;
+        private readonly CompanyRepository companyRepository = new CompanyRepository();
+        private readonly EmployeeRepository employeeRepository = new EmployeeRepository();
+
+        private readonly InboundOrderController inboundOrderController = new InboundOrderController(
             new EmployeeRepository(),
             new CompanyRepository(),
             new ProductRepository(),
             new StockRepository()
         );
-        StockRepository stockRepository = new StockRepository();
-        CompanyRepository companyRepository = new CompanyRepository();
-        ProductRepository productRepository = new ProductRepository();
-        EmployeeRepository employeeRepository = new EmployeeRepository();
-
-        private static Employee OPS_MANAGER = new EmployeeBuilder().CreateEmployee();
-        private static Company COMPANY = new CompanyBuilder().CreateCompany();
-        private static readonly int WAREHOUSE_ID = OPS_MANAGER.WarehouseId;
-        private static readonly String GCP = COMPANY.Gcp;
 
         private Product product;
         private int productId;
-        private const string GTIN = "0000";
+        private readonly ProductRepository productRepository = new ProductRepository();
+        private readonly StockRepository stockRepository = new StockRepository();
 
         public new void onSetUp()
         {
             base.onSetUp();
-            employeeRepository.AddEmployees(new List<Employee>() { OPS_MANAGER });
-            companyRepository.AddCompanies(new List<Company>() { COMPANY });
+            employeeRepository.AddEmployees(new List<Employee> {OPS_MANAGER});
+            companyRepository.AddCompanies(new List<Company> {COMPANY});
             var productDataModel = new ProductBuilder().setGtin(GTIN).CreateProductDatabaseModel();
-            productRepository.AddProducts(new List<ProductDataModel>() { productDataModel });
+            productRepository.AddProducts(new List<ProductDataModel> {productDataModel});
             product = new Product(productRepository.GetProductByGtin(GTIN));
             productId = product.Id;
         }
@@ -64,7 +61,7 @@ namespace ShipItTest
         public void TestCreateOrderProductHoldingNoStock()
         {
             onSetUp();
-            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, 0) });
+            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration> {new StockAlteration(productId, 0)});
 
             var inboundOrder = inboundOrderController.Get(WAREHOUSE_ID);
 
@@ -77,7 +74,8 @@ namespace ShipItTest
         public void TestCreateOrderProductHoldingSufficientStock()
         {
             onSetUp();
-            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, product.LowerThreshold) });
+            stockRepository.AddStock(WAREHOUSE_ID,
+                new List<StockAlteration> {new StockAlteration(productId, product.LowerThreshold)});
 
             var inboundOrder = inboundOrderController.Get(WAREHOUSE_ID);
 
@@ -88,7 +86,8 @@ namespace ShipItTest
         public void TestCreateOrderDiscontinuedProduct()
         {
             onSetUp();
-            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration>() { new StockAlteration(productId, product.LowerThreshold - 1) });
+            stockRepository.AddStock(WAREHOUSE_ID,
+                new List<StockAlteration> {new StockAlteration(productId, product.LowerThreshold - 1)});
             productRepository.DiscontinueProductByGtin(GTIN);
 
             var inboundOrder = inboundOrderController.Get(WAREHOUSE_ID);
@@ -101,13 +100,13 @@ namespace ShipItTest
         {
             onSetUp();
             var quantity = 12;
-            var inboundManifest = new InboundManifestRequestModel()
+            var inboundManifest = new InboundManifestRequestModel
             {
                 WarehouseId = WAREHOUSE_ID,
                 Gcp = GCP,
-                OrderLines = new List<OrderLine>()
+                OrderLines = new List<OrderLine>
                 {
-                    new OrderLine()
+                    new OrderLine
                     {
                         gtin = GTIN,
                         quantity = quantity
@@ -117,7 +116,8 @@ namespace ShipItTest
 
             inboundOrderController.Post(inboundManifest);
 
-            var stock = stockRepository.GetStockByWarehouseAndProductIds(WAREHOUSE_ID, new List<int>() {productId})[productId];
+            var stock =
+                stockRepository.GetStockByWarehouseAndProductIds(WAREHOUSE_ID, new List<int> {productId})[productId];
             Assert.AreEqual(stock.held, quantity);
         }
 
@@ -127,13 +127,13 @@ namespace ShipItTest
             onSetUp();
             var quantity = 12;
             var dodgyGcp = GCP + "XYZ";
-            var inboundManifest = new InboundManifestRequestModel()
+            var inboundManifest = new InboundManifestRequestModel
             {
                 WarehouseId = WAREHOUSE_ID,
                 Gcp = dodgyGcp,
-                OrderLines = new List<OrderLine>()
+                OrderLines = new List<OrderLine>
                 {
-                    new OrderLine()
+                    new OrderLine
                     {
                         gtin = GTIN,
                         quantity = quantity
@@ -158,18 +158,18 @@ namespace ShipItTest
             onSetUp();
             var quantity = 12;
             var unknownGtin = GTIN + "XYZ";
-            var inboundManifest = new InboundManifestRequestModel()
+            var inboundManifest = new InboundManifestRequestModel
             {
                 WarehouseId = WAREHOUSE_ID,
                 Gcp = GCP,
-                OrderLines = new List<OrderLine>()
+                OrderLines = new List<OrderLine>
                 {
-                    new OrderLine()
+                    new OrderLine
                     {
                         gtin = GTIN,
                         quantity = quantity
                     },
-                    new OrderLine()
+                    new OrderLine
                     {
                         gtin = unknownGtin,
                         quantity = quantity
@@ -193,18 +193,18 @@ namespace ShipItTest
         {
             onSetUp();
             var quantity = 12;
-            var inboundManifest = new InboundManifestRequestModel()
+            var inboundManifest = new InboundManifestRequestModel
             {
                 WarehouseId = WAREHOUSE_ID,
                 Gcp = GCP,
-                OrderLines = new List<OrderLine>()
+                OrderLines = new List<OrderLine>
                 {
-                    new OrderLine()
+                    new OrderLine
                     {
                         gtin = GTIN,
                         quantity = quantity
                     },
-                    new OrderLine()
+                    new OrderLine
                     {
                         gtin = GTIN,
                         quantity = quantity

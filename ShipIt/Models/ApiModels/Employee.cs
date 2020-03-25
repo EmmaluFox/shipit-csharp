@@ -1,21 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Web;
-using Mono.Security.Authenticode;
 using ShipIt.Models.DataModels;
 
 namespace ShipIt.Models.ApiModels
 {
     public class Employee
     {
-        public string Name { get; set; }
-        public int WarehouseId { get; set; }
-        public EmployeeRole role { get; set; }
-        public string ext { get; set; }
-
         public Employee(EmployeeDataModel dataModel)
         {
             Name = dataModel.Name;
@@ -23,6 +13,16 @@ namespace ShipIt.Models.ApiModels
             role = MapDatabaseRoleToApiRole(dataModel.Role);
             ext = dataModel.Ext;
         }
+
+        //Empty constructor needed for Xml serialization
+        public Employee()
+        {
+        }
+
+        public string Name { get; set; }
+        public int WarehouseId { get; set; }
+        public EmployeeRole role { get; set; }
+        public string ext { get; set; }
 
         private EmployeeRole MapDatabaseRoleToApiRole(string databaseRole)
         {
@@ -33,19 +33,14 @@ namespace ShipIt.Models.ApiModels
             throw new ArgumentOutOfRangeException("DatabaseRole");
         }
 
-        //Empty constructor needed for Xml serialization
-        public Employee()
-        {
-        }
-
-        public override String ToString()
+        public override string ToString()
         {
             return new StringBuilder()
-                    .AppendFormat("name: {0}, ", Name)
-                    .AppendFormat("warehouseId: {0}, ", WarehouseId)
-                    .AppendFormat("role: {0}, ", role)
-                    .AppendFormat("ext: {0}", ext)
-                    .ToString();
+                .AppendFormat("name: {0}, ", Name)
+                .AppendFormat("warehouseId: {0}, ", WarehouseId)
+                .AppendFormat("role: {0}, ", role)
+                .AppendFormat("ext: {0}", ext)
+                .ToString();
         }
     }
 }

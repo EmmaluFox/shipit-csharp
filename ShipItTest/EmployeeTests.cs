@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ShipIt.Controllers;
 using ShipIt.Exceptions;
 using ShipIt.Models.ApiModels;
-using ShipIt.Models.DataModels;
 using ShipIt.Repositories;
 using ShipItTest.Builders;
 
@@ -15,18 +13,17 @@ namespace ShipItTest
     [TestClass]
     public class EmployeeControllerTests : AbstractBaseTest
     {
-        EmployeeController employeeController = new EmployeeController(new EmployeeRepository());
-        EmployeeRepository employeeRepository = new EmployeeRepository();
-
         private const string NAME = "Gissell Sadeem";
         private const int WAREHOUSE_ID = 1;
+        private readonly EmployeeController employeeController = new EmployeeController(new EmployeeRepository());
+        private readonly EmployeeRepository employeeRepository = new EmployeeRepository();
 
         [TestMethod]
         public void TestRoundtripEmployeeRepository()
         {
             onSetUp();
             var employee = new EmployeeBuilder().CreateEmployee();
-            employeeRepository.AddEmployees(new List<Employee>() {employee});
+            employeeRepository.AddEmployees(new List<Employee> {employee});
             Assert.AreEqual(employeeRepository.GetEmployeeByName(employee.Name).Name, employee.Name);
             Assert.AreEqual(employeeRepository.GetEmployeeByName(employee.Name).Ext, employee.ext);
             Assert.AreEqual(employeeRepository.GetEmployeeByName(employee.Name).WarehouseId, employee.WarehouseId);
@@ -37,7 +34,7 @@ namespace ShipItTest
         {
             onSetUp();
             var employeeBuilder = new EmployeeBuilder().setName(NAME);
-            employeeRepository.AddEmployees(new List<Employee>() {employeeBuilder.CreateEmployee()});
+            employeeRepository.AddEmployees(new List<Employee> {employeeBuilder.CreateEmployee()});
             var result = employeeController.Get(NAME);
 
             var correctEmployee = employeeBuilder.CreateEmployee();
@@ -51,7 +48,8 @@ namespace ShipItTest
             onSetUp();
             var employeeBuilderA = new EmployeeBuilder().setWarehouseId(WAREHOUSE_ID).setName("A");
             var employeeBuilderB = new EmployeeBuilder().setWarehouseId(WAREHOUSE_ID).setName("B");
-            employeeRepository.AddEmployees(new List<Employee>() { employeeBuilderA.CreateEmployee(), employeeBuilderB.CreateEmployee() });
+            employeeRepository.AddEmployees(new List<Employee>
+                {employeeBuilderA.CreateEmployee(), employeeBuilderB.CreateEmployee()});
             var result = employeeController.Get(WAREHOUSE_ID).Employees.ToList();
 
             var correctEmployeeA = employeeBuilderA.CreateEmployee();
@@ -112,9 +110,9 @@ namespace ShipItTest
         {
             onSetUp();
             var employeeBuilder = new EmployeeBuilder().setName(NAME);
-            employeeRepository.AddEmployees(new List<Employee>() { employeeBuilder.CreateEmployee() });
+            employeeRepository.AddEmployees(new List<Employee> {employeeBuilder.CreateEmployee()});
 
-            var removeEmployeeRequest = new RemoveEmployeeRequest() { Name = NAME };
+            var removeEmployeeRequest = new RemoveEmployeeRequest {Name = NAME};
             employeeController.Delete(removeEmployeeRequest);
 
             try
@@ -132,7 +130,7 @@ namespace ShipItTest
         public void TestDeleteNonexistentEmployee()
         {
             onSetUp();
-            var removeEmployeeRequest = new RemoveEmployeeRequest() { Name = NAME };
+            var removeEmployeeRequest = new RemoveEmployeeRequest {Name = NAME};
 
             try
             {
@@ -150,7 +148,7 @@ namespace ShipItTest
         {
             onSetUp();
             var employeeBuilder = new EmployeeBuilder().setName(NAME);
-            employeeRepository.AddEmployees(new List<Employee>() { employeeBuilder.CreateEmployee() });
+            employeeRepository.AddEmployees(new List<Employee> {employeeBuilder.CreateEmployee()});
             var addEmployeesRequest = employeeBuilder.CreateAddEmployeesRequest();
 
             try
