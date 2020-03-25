@@ -21,7 +21,7 @@ namespace ShipIt.Controllers
 
         public EmployeeResponse Get(string name)
         {
-            Log.Info(string.Format("Looking up employee by name: {0}", name));
+            Log.Info($"Looking up employee by name: {name}");
 
             var employee = new Employee(_employeeRepository.GetEmployeeByName(name));
 
@@ -31,13 +31,13 @@ namespace ShipIt.Controllers
 
         public EmployeeResponse Get(int warehouseId)
         {
-            Log.Info(string.Format("Looking up employee by id: {0}", warehouseId));
+            Log.Info($"Looking up employee by id: {warehouseId}");
 
             var employees = _employeeRepository
                 .GetEmployeesByWarehouseId(warehouseId)
                 .Select(e => new Employee(e));
 
-            Log.Info(string.Format("Found employees: {0}", employees));
+            Log.Info($"Found employees: {employees}");
 
             return new EmployeeResponse(employees);
         }

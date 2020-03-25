@@ -22,7 +22,7 @@ namespace ShipIt.Controllers
         {
             if (gcp == null) throw new MalformedRequestException("Unable to parse gcp from request parameters");
 
-            Log.Info(string.Format("Looking up company by name: {0}", gcp));
+            Log.Info($"Looking up company by name: {gcp}");
 
             var companyDataModel = _companyRepository.GetCompany(gcp);
             var company = new Company(companyDataModel);

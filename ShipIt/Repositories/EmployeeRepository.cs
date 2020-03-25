@@ -69,7 +69,7 @@ namespace ShipIt.Repositories
         {
             var sql = "SELECT name, w_id, role, ext FROM em WHERE name = @name";
             var parameter = new NpgsqlParameter("@name", name);
-            var noProductWithIdErrorMessage = string.Format("No employees found with name: {0}", name);
+            var noProductWithIdErrorMessage = $"No employees found with name: {name}";
             return RunSingleGetQuery(sql, reader => new EmployeeDataModel(reader), noProductWithIdErrorMessage,
                 parameter);
         }
@@ -79,7 +79,7 @@ namespace ShipIt.Repositories
             var sql = "SELECT name, w_id, role, ext FROM em WHERE w_id = @w_id";
             var parameter = new NpgsqlParameter("@w_id", warehouseId);
             var noProductWithIdErrorMessage =
-                string.Format("No employees found with Warehouse Id: {0}", warehouseId);
+                $"No employees found with Warehouse Id: {warehouseId}";
             return RunGetQuery(sql, reader => new EmployeeDataModel(reader), noProductWithIdErrorMessage, parameter);
         }
 
@@ -93,7 +93,7 @@ namespace ShipIt.Repositories
             };
 
             var noProductWithIdErrorMessage =
-                string.Format("No employees found with Warehouse Id: {0}", warehouseId);
+                $"No employees found with Warehouse Id: {warehouseId}";
             return RunSingleGetQuery(sql, reader => new EmployeeDataModel(reader), noProductWithIdErrorMessage,
                 parameters);
         }

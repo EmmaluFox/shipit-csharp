@@ -33,7 +33,7 @@ namespace ShipIt.Validators
  */
         private void AssertNotNull(string fieldName, object value)
         {
-            if (value == null) AddError(string.Format("Field {0} cannot be null", fieldName));
+            if (value == null) AddError($"Field {fieldName} cannot be null");
         }
 
         /**
@@ -41,25 +41,25 @@ namespace ShipIt.Validators
  */
         protected void AssertNotBlank(string fieldName, string value)
         {
-            if (string.IsNullOrWhiteSpace(value)) AddError(string.Format("Field {0} cannot be blank", fieldName));
+            if (string.IsNullOrWhiteSpace(value)) AddError($"Field {fieldName} cannot be blank");
         }
 
         protected void AssertNumeric(string fieldName, string value)
         {
             double d;
-            if (!double.TryParse(value, out d)) AddError(string.Format("Field {0} must be numeric", fieldName));
+            if (!double.TryParse(value, out d)) AddError($"Field {fieldName} must be numeric");
         }
 
         protected void AssertMaxLength(string fieldName, string value, int maxLength)
         {
             if (value.Length > maxLength)
-                AddError(string.Format("Field {0} must be shorter than {1} characters", fieldName, maxLength));
+                AddError($"Field {fieldName} must be shorter than {maxLength} characters");
         }
 
         protected void AssertExactLength(string fieldName, string value, int exactLength)
         {
             if (value.Length != exactLength)
-                AddError(string.Format("Field {0} must be exactly {1} characters", fieldName, exactLength));
+                AddError($"Field {fieldName} must be exactly {exactLength} characters");
         }
 
         /**
@@ -67,12 +67,12 @@ namespace ShipIt.Validators
  */
         protected void AssertNonNegative(string fieldName, int value)
         {
-            if (value < 0) AddError(string.Format("Field {0} must be non-negative", fieldName));
+            if (value < 0) AddError($"Field {fieldName} must be non-negative");
         }
 
         protected void AssertNonNegative(string fieldName, float value)
         {
-            if (value < 0) AddError(string.Format("Field {0} must be non-negative", fieldName));
+            if (value < 0) AddError($"Field {fieldName} must be non-negative");
         }
 
         /**

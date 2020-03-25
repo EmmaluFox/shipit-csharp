@@ -5,6 +5,7 @@
         NoSuchEntityException,
         MalformedRequest,
         InvalidState,
-        InsufficientStock
+        InsufficientStock,
+        TruckOverloaded
     }
 }

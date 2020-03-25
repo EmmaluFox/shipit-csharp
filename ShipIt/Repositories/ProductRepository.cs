@@ -29,14 +29,13 @@ namespace ShipIt.Repositories
             var sql = "SELECT p_id, gtin_cd, gcp_cd, gtin_nm, m_g, l_th, ds, min_qt FROM gtin WHERE gtin_cd = @gtin_cd";
             var parameter = new NpgsqlParameter("@gtin_cd", gtin);
             return RunSingleGetQuery(sql, reader => new ProductDataModel(reader),
-                string.Format("No products found with gtin of value {0}", gtin), parameter);
+                $"No products found with gtin of value {gtin}", parameter);
         }
 
         public IEnumerable<ProductDataModel> GetProductsByGtin(List<string> gtins)
         {
-            var sql = string.Format(
-                "SELECT p_id, gtin_cd, gcp_cd, gtin_nm, m_g, l_th, ds, min_qt FROM gtin WHERE gtin_cd IN ('{0}')",
-                string.Join("','", gtins));
+            var sql =
+                $"SELECT p_id, gtin_cd, gcp_cd, gtin_nm, m_g, l_th, ds, min_qt FROM gtin WHERE gtin_cd IN ('{string.Join("','", gtins)}')";
             return RunGetQuery(sql, reader => new ProductDataModel(reader), "No products found with given gtin ids",
                 null);
         }
@@ -45,7 +44,7 @@ namespace ShipIt.Repositories
         {
             var sql = "SELECT p_id, gtin_cd, gcp_cd, gtin_nm, m_g, l_th, ds, min_qt FROM gtin WHERE p_id = @p_id";
             var parameter = new NpgsqlParameter("@p_id", id);
-            var noProductWithIdErrorMessage = string.Format("No products found with id of value {0}", id.ToString());
+            var noProductWithIdErrorMessage = $"No products found with id of value {id.ToString()}";
             return RunSingleGetQuery(sql, reader => new ProductDataModel(reader), noProductWithIdErrorMessage,
                 parameter);
         }
@@ -55,7 +54,7 @@ namespace ShipIt.Repositories
             var sql = "UPDATE gtin SET ds = 1 WHERE gtin_cd = @gtin_cd";
             var parameter = new NpgsqlParameter("@gtin_cd", gtin);
             var noProductWithGtinErrorMessage =
-                string.Format("No products found with gtin of value {0}", gtin);
+                $"No products found with gtin of value {gtin}";
 
             RunSingleQuery(sql, noProductWithGtinErrorMessage, parameter);
         }
@@ -71,16 +70,15 @@ namespace ShipIt.Repositories
             foreach (var product in products)
             {
                 if (gtins.Contains(product.Gtin))
-                    throw new MalformedRequestException(string.Format("Cannot add products with duplicate gtins: {0}",
-                        product.Gtin));
+                    throw new MalformedRequestException($"Cannot add products with duplicate gtins: {product.Gtin}");
                 gtins.Add(product.Gtin);
                 parametersList.Add(product.GetNpgsqlParameters().ToArray());
             }
 
             var conflicts = TryGetProductsByGtin(gtins);
             if (conflicts.Any())
-                throw new MalformedRequestException(string.Format("Cannot add products with existing gtins: {0}",
-                    string.Join(", ", conflicts.Select(c => c.Gtin))));
+                throw new MalformedRequestException(
+                    $"Cannot add products with existing gtins: {string.Join(", ", conflicts.Select(c => c.Gtin))}");
 
             RunTransaction(sql, parametersList);
         }

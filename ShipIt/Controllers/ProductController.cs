@@ -20,7 +20,7 @@ namespace ShipIt.Controllers
 
         public ProductController(IProductRepository productRepository)
         {
-            this._productRepository = productRepository;
+            _productRepository = productRepository;
         }
 
         public ProductResponse Get(string gtin)
