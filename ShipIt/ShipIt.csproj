@@ -20,6 +20,7 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -165,13 +166,14 @@
     <Compile Include="Repositories\RepositoryBase.cs" />
     <Compile Include="Repositories\StockRepository.cs" />
     <Compile Include="Repositories\ProductRepository.cs" />
+    <Compile Include="Services\OutboundOrderResponse.cs" />
+    <Compile Include="Services\TrucksService.cs" />
     <Compile Include="Startup\WindsorCompositionRoot.cs" />
     <Compile Include="Controllers\StatusController.cs" />
     <Compile Include="Validators\BaseValidator.cs" />
     <Compile Include="Validators\ProductValidator.cs" />
     <Compile Include="Startup\WebApiConfig.cs" />
   </ItemGroup>
-  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
