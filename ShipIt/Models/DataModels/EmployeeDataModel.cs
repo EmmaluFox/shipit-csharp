@@ -18,8 +18,9 @@ namespace ShipIt.Models.DataModels
         {
             Name = employee.Name;
             WarehouseId = employee.WarehouseId;
-            Role = MapApiRoleToDatabaseRole(employee.role);
-            Ext = employee.ext;
+            Role = MapApiRoleToDatabaseRole(employee.Role);
+            Ext = employee.Ext;
+            Id = employee.Id;
         }
 
         [DatabaseColumnName("name")] public string Name { get; set; }
@@ -29,13 +30,15 @@ namespace ShipIt.Models.DataModels
         [DatabaseColumnName("role")] public string Role { get; set; }
 
         [DatabaseColumnName("ext")] public string Ext { get; set; }
+        
+        [DatabaseColumnName("id")] public int Id { get; set; }
 
         private string MapApiRoleToDatabaseRole(EmployeeRole employeeRole)
         {
-            if (employeeRole == EmployeeRole.CLEANER) return DataBaseRoles.Cleaner;
-            if (employeeRole == EmployeeRole.MANAGER) return DataBaseRoles.Manager;
-            if (employeeRole == EmployeeRole.OPERATIONS_MANAGER) return DataBaseRoles.OperationsManager;
-            if (employeeRole == EmployeeRole.PICKER) return DataBaseRoles.Picker;
+            if (employeeRole == EmployeeRole.Cleaner) return DataBaseRoles.Cleaner;
+            if (employeeRole == EmployeeRole.Manager) return DataBaseRoles.Manager;
+            if (employeeRole == EmployeeRole.OperationsManager) return DataBaseRoles.OperationsManager;
+            if (employeeRole == EmployeeRole.Picker) return DataBaseRoles.Picker;
             throw new ArgumentOutOfRangeException("EmployeeRole");
         }
     }

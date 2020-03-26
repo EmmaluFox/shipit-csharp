@@ -14,24 +14,24 @@ namespace ShipIt.Controllers
 {
     public class ProductController : ApiController
     {
-        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly IProductRepository productRepository;
+        private readonly IProductRepository _productRepository;
 
         public ProductController(IProductRepository productRepository)
         {
-            this.productRepository = productRepository;
+            this._productRepository = productRepository;
         }
 
         public ProductResponse Get(string gtin)
         {
             if (gtin == null) throw new MalformedRequestException("Unable to parse gtin from request parameters");
 
-            log.Info("Looking up product by gtin: " + gtin);
+            Log.Info("Looking up product by gtin: " + gtin);
 
-            var product = new Product(productRepository.GetProductByGtin(gtin));
+            var product = new Product(_productRepository.GetProductByGtin(gtin));
 
-            log.Info("Found product: " + product);
+            Log.Info("Found product: " + product);
 
             return new ProductResponse(product);
         }
@@ -47,12 +47,12 @@ namespace ShipIt.Controllers
                 parsedProducts.Add(parsedProduct);
             }
 
-            log.Info("Adding products: " + parsedProducts);
+            Log.Info("Adding products: " + parsedProducts);
 
             var dataProducts = parsedProducts.Select(p => new ProductDataModel(p));
-            productRepository.AddProducts(dataProducts);
+            _productRepository.AddProducts(dataProducts);
 
-            log.Debug("Products added successfully");
+            Log.Debug("Products added successfully");
 
             return new Response {Success = true};
         }
@@ -62,11 +62,11 @@ namespace ShipIt.Controllers
         {
             if (gtin == null) throw new MalformedRequestException("Unable to parse gtin from request parameters");
 
-            log.Info("Discontinuing up product by gtin: " + gtin);
+            Log.Info("Discontinuing up product by gtin: " + gtin);
 
-            productRepository.DiscontinueProductByGtin(gtin);
+            _productRepository.DiscontinueProductByGtin(gtin);
 
-            log.Info("Discontinued product: " + gtin);
+            Log.Info("Discontinued product: " + gtin);
 
             return new Response {Success = true};
         }

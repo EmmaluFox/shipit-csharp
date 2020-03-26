@@ -8,60 +8,60 @@ namespace ShipItTest.Builders
 {
     public class ProductBuilder
     {
-        private int Discontinued;
-        private string Gcp = "0000346";
-        private string Gtin = "0099346374235";
-        private int Id = 1;
-        private int LowerThreshold = 322;
-        private int MinimumOrderQuantity = 108;
-        private string Name = "2 Count 1 T30 Torx Bit Tips TX";
-        private float Weight = 300.0f;
+        private int _discontinued;
+        private string _gcp = "0000346";
+        private string _gtin = "0099346374235";
+        private int _id = 1;
+        private int _lowerThreshold = 322;
+        private int _minimumOrderQuantity = 108;
+        private string _name = "2 Count 1 T30 Torx Bit Tips TX";
+        private float _weight = 300.0f;
 
-        public ProductBuilder setId(int id)
+        public ProductBuilder SetId(int id)
         {
-            Id = id;
+            _id = id;
             return this;
         }
 
-        public ProductBuilder setGtin(string gtin)
+        public ProductBuilder SetGtin(string gtin)
         {
-            Gtin = gtin;
+            _gtin = gtin;
             return this;
         }
 
-        public ProductBuilder setGcp(string gcp)
+        public ProductBuilder SetGcp(string gcp)
         {
-            Gcp = gcp;
+            _gcp = gcp;
             return this;
         }
 
-        public ProductBuilder setName(string name)
+        public ProductBuilder SetName(string name)
         {
-            Name = name;
+            _name = name;
             return this;
         }
 
-        public ProductBuilder setWeight(float weight)
+        public ProductBuilder SetWeight(float weight)
         {
-            Weight = weight;
+            _weight = weight;
             return this;
         }
 
-        public ProductBuilder setLowerThreshold(int lowerThreshold)
+        public ProductBuilder SetLowerThreshold(int lowerThreshold)
         {
-            LowerThreshold = lowerThreshold;
+            _lowerThreshold = lowerThreshold;
             return this;
         }
 
-        public ProductBuilder setDiscontinued(int discontinued)
+        public ProductBuilder SetDiscontinued(int discontinued)
         {
-            Discontinued = discontinued;
+            _discontinued = discontinued;
             return this;
         }
 
-        public ProductBuilder setMinimumOrderQuantity(int minimumOrderQuantity)
+        public ProductBuilder SetMinimumOrderQuantity(int minimumOrderQuantity)
         {
-            MinimumOrderQuantity = minimumOrderQuantity;
+            _minimumOrderQuantity = minimumOrderQuantity;
             return this;
         }
 
@@ -69,14 +69,14 @@ namespace ShipItTest.Builders
         {
             return new ProductDataModel
             {
-                Discontinued = Discontinued,
-                Gcp = Gcp,
-                Gtin = Gtin,
-                Id = Id,
-                LowerThreshold = LowerThreshold,
-                MinimumOrderQuantity = MinimumOrderQuantity,
-                Name = Name,
-                Weight = Weight
+                Discontinued = _discontinued,
+                Gcp = _gcp,
+                Gtin = _gtin,
+                Id = _id,
+                LowerThreshold = _lowerThreshold,
+                MinimumOrderQuantity = _minimumOrderQuantity,
+                Name = _name,
+                Weight = _weight
             };
         }
 
@@ -84,14 +84,14 @@ namespace ShipItTest.Builders
         {
             return new Product
             {
-                Discontinued = Discontinued == 1,
-                Gcp = Gcp,
-                Gtin = Gtin,
-                Id = Id,
-                LowerThreshold = LowerThreshold,
-                MinimumOrderQuantity = MinimumOrderQuantity,
-                Name = Name,
-                Weight = Weight
+                Discontinued = _discontinued == 1,
+                Gcp = _gcp,
+                Gtin = _gtin,
+                Id = _id,
+                LowerThreshold = _lowerThreshold,
+                MinimumOrderQuantity = _minimumOrderQuantity,
+                Name = _name,
+                Weight = _weight
             };
         }
 
@@ -103,13 +103,13 @@ namespace ShipItTest.Builders
                 {
                     new ProductRequestModel
                     {
-                        Discontinued = Discontinued == 1 ? "true" : "false",
-                        Gcp = Gcp,
-                        Gtin = Gtin,
-                        LowerThreshold = LowerThreshold.ToString(),
-                        MinimumOrderQuantity = MinimumOrderQuantity.ToString(),
-                        Name = Name,
-                        Weight = Weight.ToString()
+                        Discontinued = _discontinued == 1 ? "true" : "false",
+                        Gcp = _gcp,
+                        Gtin = _gtin,
+                        LowerThreshold = _lowerThreshold.ToString(),
+                        MinimumOrderQuantity = _minimumOrderQuantity.ToString(),
+                        Name = _name,
+                        Weight = _weight.ToString()
                     }
                 }
             };
@@ -123,23 +123,23 @@ namespace ShipItTest.Builders
                 {
                     new ProductRequestModel
                     {
-                        Discontinued = Discontinued == 1 ? "true" : "false",
-                        Gcp = Gcp,
-                        Gtin = Gtin,
-                        LowerThreshold = LowerThreshold.ToString(),
-                        MinimumOrderQuantity = MinimumOrderQuantity.ToString(),
-                        Name = Name,
-                        Weight = Weight.ToString()
+                        Discontinued = _discontinued == 1 ? "true" : "false",
+                        Gcp = _gcp,
+                        Gtin = _gtin,
+                        LowerThreshold = _lowerThreshold.ToString(),
+                        MinimumOrderQuantity = _minimumOrderQuantity.ToString(),
+                        Name = _name,
+                        Weight = _weight.ToString()
                     },
                     new ProductRequestModel
                     {
-                        Discontinued = Discontinued == 1 ? "true" : "false",
-                        Gcp = Gcp,
-                        Gtin = Gtin,
-                        LowerThreshold = LowerThreshold.ToString(),
-                        MinimumOrderQuantity = MinimumOrderQuantity.ToString(),
-                        Name = Name,
-                        Weight = Weight.ToString()
+                        Discontinued = _discontinued == 1 ? "true" : "false",
+                        Gcp = _gcp,
+                        Gtin = _gtin,
+                        LowerThreshold = _lowerThreshold.ToString(),
+                        MinimumOrderQuantity = _minimumOrderQuantity.ToString(),
+                        Name = _name,
+                        Weight = _weight.ToString()
                     }
                 }
             };

@@ -50,18 +50,19 @@ namespace ShipIt.Services
             foreach (var item in lineItems)
             {
                 var newProduct = new Product(_productRepository.GetProductById(item.ProductId));
+                var orderWeight = item.Quantity * newProduct.Weight; 
+                
                 if (initialCase.Gtin == null)
                 {
                     initialCase.Gtin = newProduct.Gtin;
                 }
-
+                
                 foreach (var caseItem in cases)
-                    if (newProduct.Gtin == caseItem.Gtin && (caseItem.TotalWeight + newProduct.Weight < 2000))
+                    if (newProduct.Gtin == caseItem.Gtin)
                     {
                         caseItem.Quantity += item.Quantity;
                         caseItem.Name = newProduct.Name;
                         caseItem.WeightPerItem = newProduct.Weight;
-                        lineItems.Remove(item);
                     }
                     else
                     {
@@ -72,7 +73,7 @@ namespace ShipIt.Services
                             Name = newProduct.Name,
                             WeightPerItem = newProduct.Weight
                         };
-                        lineItems.Remove(item);
+                        item.Quantity -= item.Quantity;
                         cases.Add(newCase);
                     }
             }
@@ -80,11 +81,11 @@ namespace ShipIt.Services
             return cases;
         }
         
-        private Truck GetTruckFromLoadingBay(List<Case> unloadedCases) {
+        private static Truck GetTruckFromLoadingBay(List<Case> unloadedCases) {
             var truck = new Truck();
             var caseLoad = new List<Case>();
             var caseLoadTotalWeight = caseLoad.Sum(load => load.TotalWeight);
-            caseLoad.AddRange(unloadedCases.Where(uniqueCase => uniqueCase.TotalWeight + caseLoadTotalWeight < 2000));
+            caseLoad.AddRange(unloadedCases.Where(uniqueCase => uniqueCase.TotalWeight + caseLoadTotalWeight < 2001));
             truck.Cases = caseLoad;
             return truck;
         }

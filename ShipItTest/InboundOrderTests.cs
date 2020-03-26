@@ -13,71 +13,71 @@ namespace ShipItTest
     [TestClass]
     public class InboundOrderControllerTests : AbstractBaseTest
     {
-        private const string GTIN = "0000";
+        private const string Gtin = "0000";
 
-        private static readonly Employee OPS_MANAGER = new EmployeeBuilder().CreateEmployee();
-        private static readonly Company COMPANY = new CompanyBuilder().CreateCompany();
-        private static readonly int WAREHOUSE_ID = OPS_MANAGER.WarehouseId;
-        private static readonly string GCP = COMPANY.Gcp;
-        private readonly CompanyRepository companyRepository = new CompanyRepository();
-        private readonly EmployeeRepository employeeRepository = new EmployeeRepository();
+        private static readonly Employee OpsManager = new EmployeeBuilder().CreateEmployee();
+        private static readonly Company Company = new CompanyBuilder().CreateCompany();
+        private static readonly int WarehouseId = OpsManager.WarehouseId;
+        private static readonly string Gcp = Company.Gcp;
+        private readonly CompanyRepository _companyRepository = new CompanyRepository();
+        private readonly EmployeeRepository _employeeRepository = new EmployeeRepository();
 
-        private readonly InboundOrderController inboundOrderController = new InboundOrderController(
+        private readonly InboundOrderController _inboundOrderController = new InboundOrderController(
             new EmployeeRepository(),
             new CompanyRepository(),
             new ProductRepository(),
             new StockRepository()
         );
 
-        private Product product;
-        private int productId;
-        private readonly ProductRepository productRepository = new ProductRepository();
-        private readonly StockRepository stockRepository = new StockRepository();
+        private Product _product;
+        private int _productId;
+        private readonly ProductRepository _productRepository = new ProductRepository();
+        private readonly StockRepository _stockRepository = new StockRepository();
 
-        public new void onSetUp()
+        public new void OnSetUp()
         {
-            base.onSetUp();
-            employeeRepository.AddEmployees(new List<Employee> {OPS_MANAGER});
-            companyRepository.AddCompanies(new List<Company> {COMPANY});
-            var productDataModel = new ProductBuilder().setGtin(GTIN).CreateProductDatabaseModel();
-            productRepository.AddProducts(new List<ProductDataModel> {productDataModel});
-            product = new Product(productRepository.GetProductByGtin(GTIN));
-            productId = product.Id;
+            base.OnSetUp();
+            _employeeRepository.AddEmployees(new List<Employee> {OpsManager});
+            _companyRepository.AddCompanies(new List<Company> {Company});
+            var productDataModel = new ProductBuilder().SetGtin(Gtin).CreateProductDatabaseModel();
+            _productRepository.AddProducts(new List<ProductDataModel> {productDataModel});
+            _product = new Product(_productRepository.GetProductByGtin(Gtin));
+            _productId = _product.Id;
         }
 
         [TestMethod]
         public void TestCreateOrderNoProductsHeld()
         {
-            onSetUp();
+            OnSetUp();
 
-            var inboundOrder = inboundOrderController.Get(WAREHOUSE_ID);
+            var inboundOrder = _inboundOrderController.Get(WarehouseId);
 
-            Assert.AreEqual(inboundOrder.WarehouseId, WAREHOUSE_ID);
-            Assert.IsTrue(EmployeesAreEqual(inboundOrder.OperationsManager, OPS_MANAGER));
+            Assert.AreEqual(inboundOrder.WarehouseId, WarehouseId);
+            Assert.IsTrue(EmployeesAreEqual(inboundOrder.OperationsManager, OpsManager));
             Assert.AreEqual(inboundOrder.OrderSegments.Count(), 0);
         }
 
         [TestMethod]
         public void TestCreateOrderProductHoldingNoStock()
         {
-            onSetUp();
-            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration> {new StockAlteration(productId, 0)});
+            OnSetUp();
+            _stockRepository.AddStock(WarehouseId, new List<StockAlteration> {new StockAlteration(_productId, 0)});
 
-            var inboundOrder = inboundOrderController.Get(WAREHOUSE_ID);
+            var inboundOrder = _inboundOrderController.Get(WarehouseId);
 
             Assert.AreEqual(inboundOrder.OrderSegments.Count(), 1);
             var orderSegment = inboundOrder.OrderSegments.First();
-            Assert.AreEqual(orderSegment.Company.Gcp, GCP);
+            Assert.AreEqual(orderSegment.Company.Gcp, Gcp);
         }
 
         [TestMethod]
         public void TestCreateOrderProductHoldingSufficientStock()
         {
-            onSetUp();
-            stockRepository.AddStock(WAREHOUSE_ID,
-                new List<StockAlteration> {new StockAlteration(productId, product.LowerThreshold)});
+            OnSetUp();
+            _stockRepository.AddStock(WarehouseId,
+                new List<StockAlteration> {new StockAlteration(_productId, _product.LowerThreshold)});
 
-            var inboundOrder = inboundOrderController.Get(WAREHOUSE_ID);
+            var inboundOrder = _inboundOrderController.Get(WarehouseId);
 
             Assert.AreEqual(inboundOrder.OrderSegments.Count(), 0);
         }
@@ -85,12 +85,12 @@ namespace ShipItTest
         [TestMethod]
         public void TestCreateOrderDiscontinuedProduct()
         {
-            onSetUp();
-            stockRepository.AddStock(WAREHOUSE_ID,
-                new List<StockAlteration> {new StockAlteration(productId, product.LowerThreshold - 1)});
-            productRepository.DiscontinueProductByGtin(GTIN);
+            OnSetUp();
+            _stockRepository.AddStock(WarehouseId,
+                new List<StockAlteration> {new StockAlteration(_productId, _product.LowerThreshold - 1)});
+            _productRepository.DiscontinueProductByGtin(Gtin);
 
-            var inboundOrder = inboundOrderController.Get(WAREHOUSE_ID);
+            var inboundOrder = _inboundOrderController.Get(WarehouseId);
 
             Assert.AreEqual(inboundOrder.OrderSegments.Count(), 0);
         }
@@ -98,52 +98,52 @@ namespace ShipItTest
         [TestMethod]
         public void TestProcessManifest()
         {
-            onSetUp();
+            OnSetUp();
             var quantity = 12;
             var inboundManifest = new InboundManifestRequestModel
             {
-                WarehouseId = WAREHOUSE_ID,
-                Gcp = GCP,
+                WarehouseId = WarehouseId,
+                Gcp = Gcp,
                 OrderLines = new List<OrderLine>
                 {
                     new OrderLine
                     {
-                        gtin = GTIN,
-                        quantity = quantity
+                        Gtin = Gtin,
+                        Quantity = quantity
                     }
                 }
             };
 
-            inboundOrderController.Post(inboundManifest);
+            _inboundOrderController.Post(inboundManifest);
 
             var stock =
-                stockRepository.GetStockByWarehouseAndProductIds(WAREHOUSE_ID, new List<int> {productId})[productId];
-            Assert.AreEqual(stock.held, quantity);
+                _stockRepository.GetStockByWarehouseAndProductIds(WarehouseId, new List<int> {_productId})[_productId];
+            Assert.AreEqual(stock.Held, quantity);
         }
 
         [TestMethod]
         public void TestProcessManifestRejectsDodgyGcp()
         {
-            onSetUp();
+            OnSetUp();
             var quantity = 12;
-            var dodgyGcp = GCP + "XYZ";
+            var dodgyGcp = Gcp + "XYZ";
             var inboundManifest = new InboundManifestRequestModel
             {
-                WarehouseId = WAREHOUSE_ID,
+                WarehouseId = WarehouseId,
                 Gcp = dodgyGcp,
                 OrderLines = new List<OrderLine>
                 {
                     new OrderLine
                     {
-                        gtin = GTIN,
-                        quantity = quantity
+                        Gtin = Gtin,
+                        Quantity = quantity
                     }
                 }
             };
 
             try
             {
-                inboundOrderController.Post(inboundManifest);
+                _inboundOrderController.Post(inboundManifest);
                 Assert.Fail("Expected exception to be thrown.");
             }
             catch (ValidationException e)
@@ -155,31 +155,31 @@ namespace ShipItTest
         [TestMethod]
         public void TestProcessManifestRejectsUnknownProduct()
         {
-            onSetUp();
+            OnSetUp();
             var quantity = 12;
-            var unknownGtin = GTIN + "XYZ";
+            var unknownGtin = Gtin + "XYZ";
             var inboundManifest = new InboundManifestRequestModel
             {
-                WarehouseId = WAREHOUSE_ID,
-                Gcp = GCP,
+                WarehouseId = WarehouseId,
+                Gcp = Gcp,
                 OrderLines = new List<OrderLine>
                 {
                     new OrderLine
                     {
-                        gtin = GTIN,
-                        quantity = quantity
+                        Gtin = Gtin,
+                        Quantity = quantity
                     },
                     new OrderLine
                     {
-                        gtin = unknownGtin,
-                        quantity = quantity
+                        Gtin = unknownGtin,
+                        Quantity = quantity
                     }
                 }
             };
 
             try
             {
-                inboundOrderController.Post(inboundManifest);
+                _inboundOrderController.Post(inboundManifest);
                 Assert.Fail("Expected exception to be thrown.");
             }
             catch (ValidationException e)
@@ -191,44 +191,44 @@ namespace ShipItTest
         [TestMethod]
         public void TestProcessManifestRejectsDuplicateGtins()
         {
-            onSetUp();
+            OnSetUp();
             var quantity = 12;
             var inboundManifest = new InboundManifestRequestModel
             {
-                WarehouseId = WAREHOUSE_ID,
-                Gcp = GCP,
+                WarehouseId = WarehouseId,
+                Gcp = Gcp,
                 OrderLines = new List<OrderLine>
                 {
                     new OrderLine
                     {
-                        gtin = GTIN,
-                        quantity = quantity
+                        Gtin = Gtin,
+                        Quantity = quantity
                     },
                     new OrderLine
                     {
-                        gtin = GTIN,
-                        quantity = quantity
+                        Gtin = Gtin,
+                        Quantity = quantity
                     }
                 }
             };
 
             try
             {
-                inboundOrderController.Post(inboundManifest);
+                _inboundOrderController.Post(inboundManifest);
                 Assert.Fail("Expected exception to be thrown.");
             }
             catch (ValidationException e)
             {
-                Assert.IsTrue(e.Message.Contains(GTIN));
+                Assert.IsTrue(e.Message.Contains(Gtin));
             }
         }
 
-        private bool EmployeesAreEqual(Employee A, Employee B)
+        private bool EmployeesAreEqual(Employee a, Employee b)
         {
-            return A.WarehouseId == B.WarehouseId
-                   && A.Name == B.Name
-                   && A.role == B.role
-                   && A.ext == B.ext;
+            return a.WarehouseId == b.WarehouseId
+                   && a.Name == b.Name
+                   && a.Role == b.Role
+                   && a.Ext == b.Ext;
         }
     }
 }

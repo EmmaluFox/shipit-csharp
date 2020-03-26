@@ -11,31 +11,31 @@ namespace ShipIt.Controllers
 {
     public class OutboundOrderController : ApiController
     {
-        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly IProductRepository productRepository;
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly IProductRepository _productRepository;
 
-        private readonly IStockRepository stockRepository;
+        private readonly IStockRepository _stockRepository;
 
         public OutboundOrderController(IStockRepository stockRepository, IProductRepository productRepository)
         {
-            this.stockRepository = stockRepository;
-            this.productRepository = productRepository;
+            this._stockRepository = stockRepository;
+            this._productRepository = productRepository;
         }
 
         public void Post([FromBody] OutboundOrderRequestModel request)
         {
-            log.Info(string.Format("Processing outbound order: {0}", request));
+            Log.Info($"Processing outbound order: {request}");
 
             var gtins = new List<string>();
             foreach (var orderLine in request.OrderLines)
             {
-                if (gtins.Contains(orderLine.gtin))
+                if (gtins.Contains(orderLine.Gtin))
                     throw new ValidationException(
-                        string.Format("Outbound order request contains duplicate product gtin: {0}", orderLine.gtin));
-                gtins.Add(orderLine.gtin);
+                        $"Outbound order request contains duplicate product gtin: {orderLine.Gtin}");
+                gtins.Add(orderLine.Gtin);
             }
 
-            var productDataModels = productRepository.GetProductsByGtin(gtins);
+            var productDataModels = _productRepository.GetProductsByGtin(gtins);
             var products = productDataModels.ToDictionary(p => p.Gtin, p => new Product(p));
 
             var lineItems = new List<StockAlteration>();
@@ -43,20 +43,20 @@ namespace ShipIt.Controllers
             var errors = new List<string>();
 
             foreach (var orderLine in request.OrderLines)
-                if (!products.ContainsKey(orderLine.gtin))
+                if (!products.ContainsKey(orderLine.Gtin))
                 {
-                    errors.Add(string.Format("Unknown product gtin: {0}", orderLine.gtin));
+                    errors.Add($"Unknown product gtin: {orderLine.Gtin}");
                 }
                 else
                 {
-                    var product = products[orderLine.gtin];
-                    lineItems.Add(new StockAlteration(product.Id, orderLine.quantity));
+                    var product = products[orderLine.Gtin];
+                    lineItems.Add(new StockAlteration(product.Id, orderLine.Quantity));
                     productIds.Add(product.Id);
                 }
 
             if (errors.Count > 0) throw new NoSuchEntityException(string.Join("; ", errors));
 
-            var stock = stockRepository.GetStockByWarehouseAndProductIds(request.WarehouseId, productIds);
+            var stock = _stockRepository.GetStockByWarehouseAndProductIds(request.WarehouseId, productIds);
 
             var orderLines = request.OrderLines.ToList();
             errors = new List<string>();
@@ -68,20 +68,19 @@ namespace ShipIt.Controllers
 
                 if (!stock.ContainsKey(lineItem.ProductId))
                 {
-                    errors.Add(string.Format("Product: {0}, no stock held", orderLine.gtin));
+                    errors.Add($"Product: {orderLine.Gtin}, no stock held");
                     continue;
                 }
 
                 var item = stock[lineItem.ProductId];
-                if (lineItem.Quantity > item.held)
+                if (lineItem.Quantity > item.Held)
                     errors.Add(
-                        string.Format("Product: {0}, stock held: {1}, stock to remove: {2}", orderLine.gtin, item.held,
-                            lineItem.Quantity));
+                        $"Product: {orderLine.Gtin}, stock held: {item.Held}, stock to remove: {lineItem.Quantity}");
             }
 
             if (errors.Count > 0) throw new InsufficientStockException(string.Join("; ", errors));
 
-            stockRepository.RemoveStock(request.WarehouseId, lineItems);
+            _stockRepository.RemoveStock(request.WarehouseId, lineItems);
         }
     }
 }

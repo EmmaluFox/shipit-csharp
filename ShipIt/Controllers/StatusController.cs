@@ -15,18 +15,18 @@ namespace ShipIt.Controllers
 
     public class StatusController : ApiController
     {
-        private readonly ICompanyRepository companyRepository;
-        private readonly IEmployeeRepository employeeRepository;
-        private readonly IProductRepository productRepository;
-        private readonly IStockRepository stockRepository;
+        private readonly ICompanyRepository _companyRepository;
+        private readonly IEmployeeRepository _employeeRepository;
+        private readonly IProductRepository _productRepository;
+        private readonly IStockRepository _stockRepository;
 
         public StatusController(IEmployeeRepository employeeRepository, ICompanyRepository companyRepository,
             IProductRepository productRepository, IStockRepository stockRepository)
         {
-            this.employeeRepository = employeeRepository;
-            this.stockRepository = stockRepository;
-            this.companyRepository = companyRepository;
-            this.productRepository = productRepository;
+            this._employeeRepository = employeeRepository;
+            this._stockRepository = stockRepository;
+            this._companyRepository = companyRepository;
+            this._productRepository = productRepository;
         }
 
         // GET api/status
@@ -34,12 +34,12 @@ namespace ShipIt.Controllers
         {
             return new Status
             {
-                EmployeeCount = employeeRepository.GetCount(),
-                ItemsTracked = stockRepository.GetTrackedItemsCount(),
-                CompanyCount = companyRepository.GetCount(),
-                ProductCount = productRepository.GetCount(),
-                StockHeld = stockRepository.GetStockHeldSum(),
-                WarehouseCount = employeeRepository.GetWarehouseCount()
+                EmployeeCount = _employeeRepository.GetCount(),
+                ItemsTracked = _stockRepository.GetTrackedItemsCount(),
+                CompanyCount = _companyRepository.GetCount(),
+                ProductCount = _productRepository.GetCount(),
+                StockHeld = _stockRepository.GetStockHeldSum(),
+                WarehouseCount = _employeeRepository.GetWarehouseCount()
             };
         }
     }

@@ -35,7 +35,7 @@ namespace ShipIt.Repositories
         {
             var sql = "SELECT p_id, hld, w_id FROM stock WHERE w_id = @w_id";
             var parameter = new NpgsqlParameter("@w_id", id);
-            var noProductWithIdErrorMessage = string.Format("No stock found with w_id: {0}", id);
+            var noProductWithIdErrorMessage = $"No stock found with w_id: {id}";
             try
             {
                 return RunGetQuery(sql, reader => new StockDataModel(reader), noProductWithIdErrorMessage, parameter)
@@ -49,11 +49,11 @@ namespace ShipIt.Repositories
 
         public Dictionary<int, StockDataModel> GetStockByWarehouseAndProductIds(int warehouseId, List<int> productIds)
         {
-            var sql = string.Format("SELECT p_id, hld, w_id FROM stock WHERE w_id = @w_id AND p_id IN ({0})",
-                string.Join(",", productIds));
+            var sql =
+                $"SELECT p_id, hld, w_id FROM stock WHERE w_id = @w_id AND p_id IN ({string.Join(",", productIds)})";
             var parameter = new NpgsqlParameter("@w_id", warehouseId);
-            var noProductWithIdErrorMessage = string.Format("No stock found with w_id: {0} and p_ids: {1}",
-                warehouseId, string.Join(",", productIds));
+            var noProductWithIdErrorMessage =
+                $"No stock found with w_id: {warehouseId} and p_ids: {string.Join(",", productIds)}";
             var stock = RunGetQuery(sql, reader => new StockDataModel(reader), noProductWithIdErrorMessage, parameter);
             return stock.ToDictionary(s => s.ProductId, s => s);
         }
@@ -83,17 +83,15 @@ namespace ShipIt.Repositories
 
             for (var i = 0; i < recordsAffected.Count; i++)
                 if (recordsAffected[i] == 0)
-                    errorMessage = string.Format(
-                        "Product {0} in warehouse {1} was unexpectedly not updated (rows updated returned {2})",
-                        parametersList[i][0], warehouseId, recordsAffected[i]);
+                    errorMessage =
+                        $"Product {parametersList[i][0]} in warehouse {warehouseId} was unexpectedly not updated (rows updated returned {recordsAffected[i]})";
 
             if (errorMessage != null) throw new InvalidStateException(errorMessage);
         }
 
         public void RemoveStock(int warehouseId, List<StockAlteration> lineItems)
         {
-            var sql = string.Format("UPDATE stock SET hld = hld - @hld WHERE w_id = {0} AND p_id = @p_id",
-                warehouseId);
+            var sql = $"UPDATE stock SET hld = hld - @hld WHERE w_id = {warehouseId} AND p_id = @p_id";
 
             var parametersList = new List<NpgsqlParameter[]>();
             foreach (var lineItem in lineItems)

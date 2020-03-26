@@ -13,30 +13,30 @@ namespace ShipItTest
     [TestClass]
     public class ProductControllerTests : AbstractBaseTest
     {
-        private const int WAREHOUSE_ID = 1;
+        private const int WarehouseId = 1;
 
         // private static readonly Employee EMPLOYEE = new EmployeeBuilder().setWarehouseId(WAREHOUSE_ID).CreateEmployee();
-        private const string GTIN = "0000346374230";
-        private readonly ProductController productController = new ProductController(new ProductRepository());
-        private readonly ProductRepository productRepository = new ProductRepository();
+        private const string Gtin = "0000346374230";
+        private readonly ProductController _productController = new ProductController(new ProductRepository());
+        private readonly ProductRepository _productRepository = new ProductRepository();
 
         [TestMethod]
         public void TestRoundtripProductRepository()
         {
-            onSetUp();
+            OnSetUp();
             var product = new ProductBuilder().CreateProductDatabaseModel();
-            productRepository.AddProducts(new List<ProductDataModel> {product});
-            Assert.AreEqual(productRepository.GetProductByGtin(product.Gtin).Name, product.Name);
-            Assert.AreEqual(productRepository.GetProductByGtin(product.Gtin).Gtin, product.Gtin);
+            _productRepository.AddProducts(new List<ProductDataModel> {product});
+            Assert.AreEqual(_productRepository.GetProductByGtin(product.Gtin).Name, product.Name);
+            Assert.AreEqual(_productRepository.GetProductByGtin(product.Gtin).Gtin, product.Gtin);
         }
 
         [TestMethod]
         public void TestGetProduct()
         {
-            onSetUp();
-            var productBuilder = new ProductBuilder().setGtin(GTIN);
-            productRepository.AddProducts(new List<ProductDataModel> {productBuilder.CreateProductDatabaseModel()});
-            var result = productController.Get(GTIN);
+            OnSetUp();
+            var productBuilder = new ProductBuilder().SetGtin(Gtin);
+            _productRepository.AddProducts(new List<ProductDataModel> {productBuilder.CreateProductDatabaseModel()});
+            var result = _productController.Get(Gtin);
 
             var correctProduct = productBuilder.CreateProduct();
             Assert.IsTrue(ProductsAreEqual(correctProduct, result.Product));
@@ -46,26 +46,26 @@ namespace ShipItTest
         [TestMethod]
         public void TestGetNonexistentProduct()
         {
-            onSetUp();
+            OnSetUp();
             try
             {
-                productController.Get(GTIN);
+                _productController.Get(Gtin);
             }
             catch (NoSuchEntityException e)
             {
-                Assert.IsTrue(e.Message.Contains(GTIN));
+                Assert.IsTrue(e.Message.Contains(Gtin));
             }
         }
 
         [TestMethod]
         public void TestAddProducts()
         {
-            onSetUp();
-            var productBuilder = new ProductBuilder().setGtin(GTIN);
+            OnSetUp();
+            var productBuilder = new ProductBuilder().SetGtin(Gtin);
             var productRequest = productBuilder.CreateProductRequest();
 
-            var response = productController.Post(productRequest);
-            var databaseProduct = productRepository.GetProductByGtin(GTIN);
+            var response = _productController.Post(productRequest);
+            var databaseProduct = _productRepository.GetProductByGtin(Gtin);
             var correctDatabaseProduct = productBuilder.CreateProductDatabaseModel();
 
             Assert.IsTrue(response.Success);
@@ -75,49 +75,49 @@ namespace ShipItTest
         [TestMethod]
         public void TestAddPreexistingProduct()
         {
-            onSetUp();
-            var productBuilder = new ProductBuilder().setGtin(GTIN);
-            productRepository.AddProducts(new List<ProductDataModel> {productBuilder.CreateProductDatabaseModel()});
+            OnSetUp();
+            var productBuilder = new ProductBuilder().SetGtin(Gtin);
+            _productRepository.AddProducts(new List<ProductDataModel> {productBuilder.CreateProductDatabaseModel()});
             var productRequest = productBuilder.CreateProductRequest();
 
             try
             {
-                productController.Post(productRequest);
+                _productController.Post(productRequest);
                 Assert.Fail();
             }
             catch (MalformedRequestException e)
             {
-                Assert.IsTrue(e.Message.Contains(GTIN));
+                Assert.IsTrue(e.Message.Contains(Gtin));
             }
         }
 
         [TestMethod]
         public void TestAddDuplicateProduct()
         {
-            onSetUp();
-            var productBuilder = new ProductBuilder().setGtin(GTIN);
+            OnSetUp();
+            var productBuilder = new ProductBuilder().SetGtin(Gtin);
             var productRequest = productBuilder.CreateDuplicateProductRequest();
 
             try
             {
-                productController.Post(productRequest);
+                _productController.Post(productRequest);
                 Assert.Fail("Expected exception to be thrown.");
             }
             catch (MalformedRequestException e)
             {
-                Assert.IsTrue(e.Message.Contains(GTIN));
+                Assert.IsTrue(e.Message.Contains(Gtin));
             }
         }
 
         [TestMethod]
         public void TestDiscontinueProduct()
         {
-            onSetUp();
-            var productBuilder = new ProductBuilder().setGtin(GTIN);
-            productRepository.AddProducts(new List<ProductDataModel> {productBuilder.CreateProductDatabaseModel()});
+            OnSetUp();
+            var productBuilder = new ProductBuilder().SetGtin(Gtin);
+            _productRepository.AddProducts(new List<ProductDataModel> {productBuilder.CreateProductDatabaseModel()});
 
-            productController.Discontinue(GTIN);
-            var result = productController.Get(GTIN);
+            _productController.Discontinue(Gtin);
+            var result = _productController.Get(Gtin);
 
             Assert.IsTrue(result.Product.Discontinued);
             Assert.IsTrue(result.Success);
@@ -126,26 +126,26 @@ namespace ShipItTest
         [TestMethod]
         public void TestDiscontinueNonexistentProduct()
         {
-            onSetUp();
+            OnSetUp();
             try
             {
-                productController.Discontinue(GTIN);
+                _productController.Discontinue(Gtin);
                 Assert.Fail("Expected exception to be thrown.");
             }
             catch (NoSuchEntityException e)
             {
-                Assert.IsTrue(e.Message.Contains(GTIN));
+                Assert.IsTrue(e.Message.Contains(Gtin));
             }
         }
 
         [TestMethod]
         public void TestDiscontinueNonexistantProduct()
         {
-            onSetUp();
+            OnSetUp();
             var nonExistantGtin = "12345678";
             try
             {
-                productController.Discontinue(nonExistantGtin);
+                _productController.Discontinue(nonExistantGtin);
                 Assert.Fail("Expected exception to be thrown.");
             }
             catch (NoSuchEntityException e)
@@ -154,16 +154,16 @@ namespace ShipItTest
             }
         }
 
-        private bool ProductsAreEqual(Product A, Product B)
+        private bool ProductsAreEqual(Product a, Product b)
         {
             const double floatingPointTolerance = 10 * float.Epsilon;
-            return A.Discontinued == B.Discontinued
-                   && A.Gcp == B.Gcp
-                   && A.Gtin == B.Gtin
-                   && A.LowerThreshold == B.LowerThreshold
-                   && A.MinimumOrderQuantity == B.MinimumOrderQuantity
-                   && A.Name == B.Name
-                   && Math.Abs(A.Weight - B.Weight) < floatingPointTolerance;
+            return a.Discontinued == b.Discontinued
+                   && a.Gcp == b.Gcp
+                   && a.Gtin == b.Gtin
+                   && a.LowerThreshold == b.LowerThreshold
+                   && a.MinimumOrderQuantity == b.MinimumOrderQuantity
+                   && a.Name == b.Name
+                   && Math.Abs(a.Weight - b.Weight) < floatingPointTolerance;
         }
     }
 }

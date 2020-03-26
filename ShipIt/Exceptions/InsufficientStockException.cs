@@ -2,7 +2,7 @@
 {
     public class InsufficientStockException : ClientVisibleException
     {
-        public InsufficientStockException(string message) : base(message, ErrorCode.INSUFFICIENT_STOCK)
+        public InsufficientStockException(string message) : base(message, ErrorCode.InsufficientStock)
         {
         }
 

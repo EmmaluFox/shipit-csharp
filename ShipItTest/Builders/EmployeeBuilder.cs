@@ -6,32 +6,33 @@ namespace ShipItTest.Builders
 {
     public class EmployeeBuilder
     {
-        private string Ext = "73996";
-        private string Name = "Gissell Sadeem";
-        private EmployeeRole Role = EmployeeRole.OPERATIONS_MANAGER;
-        private int WarehouseId = 1;
+        private string _ext = "73996";
+        private string _name = "Gissell Sadeem";
+        private EmployeeRole _role = EmployeeRole.OperationsManager;
+        private int _warehouseId = 1;
+        private int _id = 348;
 
-        public EmployeeBuilder setName(string name)
+        public EmployeeBuilder SetName(string name)
         {
-            Name = name;
+            _name = name;
             return this;
         }
 
-        public EmployeeBuilder setWarehouseId(int warehouseId)
+        public EmployeeBuilder SetWarehouseId(int warehouseId)
         {
-            WarehouseId = warehouseId;
+            _warehouseId = warehouseId;
             return this;
         }
 
-        public EmployeeBuilder setRole(EmployeeRole role)
+        public EmployeeBuilder SetRole(EmployeeRole role)
         {
-            Role = role;
+            _role = role;
             return this;
         }
 
-        public EmployeeBuilder setExt(string ext)
+        public EmployeeBuilder SetExt(string ext)
         {
-            Ext = ext;
+            _ext = ext;
             return this;
         }
 
@@ -39,10 +40,11 @@ namespace ShipItTest.Builders
         {
             return new EmployeeDataModel
             {
-                Name = Name,
-                WarehouseId = WarehouseId,
-                Role = Role.ToString(),
-                Ext = Ext
+                Name = _name,
+                WarehouseId = _warehouseId,
+                Role = _role.ToString(),
+                Ext = _ext,
+                Id = _id
             };
         }
 
@@ -50,10 +52,11 @@ namespace ShipItTest.Builders
         {
             return new Employee
             {
-                Name = Name,
-                WarehouseId = WarehouseId,
-                role = Role,
-                ext = Ext
+                Name = _name,
+                WarehouseId = _warehouseId,
+                Role = _role,
+                Ext = _ext,
+                Id = _id
             };
         }
 
@@ -65,10 +68,10 @@ namespace ShipItTest.Builders
                 {
                     new Employee
                     {
-                        Name = Name,
-                        WarehouseId = WarehouseId,
-                        role = Role,
-                        ext = Ext
+                        Name = _name,
+                        WarehouseId = _warehouseId,
+                        Role = _role,
+                        Ext = _ext
                     }
                 }
             };

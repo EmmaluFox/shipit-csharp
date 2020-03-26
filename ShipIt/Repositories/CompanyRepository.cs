@@ -17,8 +17,8 @@ namespace ShipIt.Repositories
     {
         public int GetCount()
         {
-            var CompanyCountSQL = "SELECT COUNT(*) FROM gcp";
-            return (int) QueryForLong(CompanyCountSQL);
+            var companyCountSql = "SELECT COUNT(*) FROM gcp";
+            return (int) QueryForLong(companyCountSql);
         }
 
         public CompanyDataModel GetCompany(string gcp)
@@ -28,7 +28,7 @@ namespace ShipIt.Repositories
                 "FROM gcp " +
                 "WHERE gcp_cd = @gcp_cd";
             var parameter = new NpgsqlParameter("@gcp_cd", gcp);
-            var noProductWithIdErrorMessage = string.Format("No companies found with gcp: {0}", gcp);
+            var noProductWithIdErrorMessage = $"No companies found with gcp: {gcp}";
             return RunSingleGetQuery(sql, reader => new CompanyDataModel(reader), noProductWithIdErrorMessage,
                 parameter);
         }

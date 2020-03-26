@@ -13,29 +13,29 @@ namespace ShipItTest
     [TestClass]
     public class EmployeeControllerTests : AbstractBaseTest
     {
-        private const string NAME = "Gissell Sadeem";
-        private const int WAREHOUSE_ID = 1;
-        private readonly EmployeeController employeeController = new EmployeeController(new EmployeeRepository());
-        private readonly EmployeeRepository employeeRepository = new EmployeeRepository();
+        private const string Name = "Gissell Sadeem";
+        private const int WarehouseId = 1;
+        private readonly EmployeeController _employeeController = new EmployeeController(new EmployeeRepository());
+        private readonly EmployeeRepository _employeeRepository = new EmployeeRepository();
 
         [TestMethod]
         public void TestRoundtripEmployeeRepository()
         {
-            onSetUp();
+            OnSetUp();
             var employee = new EmployeeBuilder().CreateEmployee();
-            employeeRepository.AddEmployees(new List<Employee> {employee});
-            Assert.AreEqual(employeeRepository.GetEmployeeByName(employee.Name).Name, employee.Name);
-            Assert.AreEqual(employeeRepository.GetEmployeeByName(employee.Name).Ext, employee.ext);
-            Assert.AreEqual(employeeRepository.GetEmployeeByName(employee.Name).WarehouseId, employee.WarehouseId);
+            _employeeRepository.AddEmployees(new List<Employee> {employee});
+            Assert.AreEqual(_employeeRepository.GetEmployeeByName(employee.Name).Name, employee.Name);
+            Assert.AreEqual(_employeeRepository.GetEmployeeByName(employee.Name).Ext, employee.Ext);
+            Assert.AreEqual(_employeeRepository.GetEmployeeByName(employee.Name).WarehouseId, employee.WarehouseId);
         }
 
         [TestMethod]
         public void TestGetEmployeeByName()
         {
-            onSetUp();
-            var employeeBuilder = new EmployeeBuilder().setName(NAME);
-            employeeRepository.AddEmployees(new List<Employee> {employeeBuilder.CreateEmployee()});
-            var result = employeeController.Get(NAME);
+            OnSetUp();
+            var employeeBuilder = new EmployeeBuilder().SetName(Name);
+            _employeeRepository.AddEmployees(new List<Employee> {employeeBuilder.CreateEmployee()});
+            var result = _employeeController.Get(Name);
 
             var correctEmployee = employeeBuilder.CreateEmployee();
             Assert.IsTrue(EmployeesAreEqual(correctEmployee, result.Employees.First()));
@@ -45,12 +45,12 @@ namespace ShipItTest
         [TestMethod]
         public void TestGetEmployeesByWarehouseId()
         {
-            onSetUp();
-            var employeeBuilderA = new EmployeeBuilder().setWarehouseId(WAREHOUSE_ID).setName("A");
-            var employeeBuilderB = new EmployeeBuilder().setWarehouseId(WAREHOUSE_ID).setName("B");
-            employeeRepository.AddEmployees(new List<Employee>
+            OnSetUp();
+            var employeeBuilderA = new EmployeeBuilder().SetWarehouseId(WarehouseId).SetName("A");
+            var employeeBuilderB = new EmployeeBuilder().SetWarehouseId(WarehouseId).SetName("B");
+            _employeeRepository.AddEmployees(new List<Employee>
                 {employeeBuilderA.CreateEmployee(), employeeBuilderB.CreateEmployee()});
-            var result = employeeController.Get(WAREHOUSE_ID).Employees.ToList();
+            var result = _employeeController.Get(WarehouseId).Employees.ToList();
 
             var correctEmployeeA = employeeBuilderA.CreateEmployee();
             var correctEmployeeB = employeeBuilderB.CreateEmployee();
@@ -63,42 +63,42 @@ namespace ShipItTest
         [TestMethod]
         public void TestGetNonExistentEmployee()
         {
-            onSetUp();
+            OnSetUp();
             try
             {
-                employeeController.Get(NAME);
+                _employeeController.Get(Name);
                 Assert.Fail("Expected exception to be thrown.");
             }
             catch (NoSuchEntityException e)
             {
-                Assert.IsTrue(e.Message.Contains(NAME));
+                Assert.IsTrue(e.Message.Contains(Name));
             }
         }
 
         [TestMethod]
         public void TestGetEmployeeInNonexistentWarehouse()
         {
-            onSetUp();
+            OnSetUp();
             try
             {
-                var employees = employeeController.Get(WAREHOUSE_ID).Employees.ToList();
+                var employees = _employeeController.Get(WarehouseId).Employees.ToList();
                 Assert.Fail("Expected exception to be thrown.");
             }
             catch (NoSuchEntityException e)
             {
-                Assert.IsTrue(e.Message.Contains(WAREHOUSE_ID.ToString()));
+                Assert.IsTrue(e.Message.Contains(WarehouseId.ToString()));
             }
         }
 
         [TestMethod]
         public void TestAddEmployees()
         {
-            onSetUp();
-            var employeeBuilder = new EmployeeBuilder().setName(NAME);
+            OnSetUp();
+            var employeeBuilder = new EmployeeBuilder().SetName(Name);
             var addEmployeesRequest = employeeBuilder.CreateAddEmployeesRequest();
 
-            var response = employeeController.Post(addEmployeesRequest);
-            var databaseEmployee = employeeRepository.GetEmployeeByName(NAME);
+            var response = _employeeController.Post(addEmployeesRequest);
+            var databaseEmployee = _employeeRepository.GetEmployeeByName(Name);
             var correctDatabaseEmploye = employeeBuilder.CreateEmployee();
 
             Assert.IsTrue(response.Success);
@@ -108,52 +108,52 @@ namespace ShipItTest
         [TestMethod]
         public void TestDeleteEmployees()
         {
-            onSetUp();
-            var employeeBuilder = new EmployeeBuilder().setName(NAME);
-            employeeRepository.AddEmployees(new List<Employee> {employeeBuilder.CreateEmployee()});
+            OnSetUp();
+            var employeeBuilder = new EmployeeBuilder().SetName(Name);
+            _employeeRepository.AddEmployees(new List<Employee> {employeeBuilder.CreateEmployee()});
 
-            var removeEmployeeRequest = new RemoveEmployeeRequest {Name = NAME};
-            employeeController.Delete(removeEmployeeRequest);
+            var removeEmployeeRequest = new RemoveEmployeeRequest {Name = Name};
+            _employeeController.Delete(removeEmployeeRequest);
 
             try
             {
-                employeeController.Get(NAME);
+                _employeeController.Get(Name);
                 Assert.Fail("Expected exception to be thrown.");
             }
             catch (NoSuchEntityException e)
             {
-                Assert.IsTrue(e.Message.Contains(NAME));
+                Assert.IsTrue(e.Message.Contains(Name));
             }
         }
 
         [TestMethod]
         public void TestDeleteNonexistentEmployee()
         {
-            onSetUp();
-            var removeEmployeeRequest = new RemoveEmployeeRequest {Name = NAME};
+            OnSetUp();
+            var removeEmployeeRequest = new RemoveEmployeeRequest {Name = Name};
 
             try
             {
-                employeeController.Delete(removeEmployeeRequest);
+                _employeeController.Delete(removeEmployeeRequest);
                 Assert.Fail("Expected exception to be thrown.");
             }
             catch (NoSuchEntityException e)
             {
-                Assert.IsTrue(e.Message.Contains(NAME));
+                Assert.IsTrue(e.Message.Contains(Name));
             }
         }
 
         [TestMethod]
         public void TestAddDuplicateEmployee()
         {
-            onSetUp();
-            var employeeBuilder = new EmployeeBuilder().setName(NAME);
-            employeeRepository.AddEmployees(new List<Employee> {employeeBuilder.CreateEmployee()});
+            OnSetUp();
+            var employeeBuilder = new EmployeeBuilder().SetName(Name);
+            _employeeRepository.AddEmployees(new List<Employee> {employeeBuilder.CreateEmployee()});
             var addEmployeesRequest = employeeBuilder.CreateAddEmployeesRequest();
 
             try
             {
-                employeeController.Post(addEmployeesRequest);
+                _employeeController.Post(addEmployeesRequest);
                 Assert.Fail("Expected exception to be thrown.");
             }
             catch (Exception)
@@ -162,12 +162,12 @@ namespace ShipItTest
             }
         }
 
-        private bool EmployeesAreEqual(Employee A, Employee B)
+        private bool EmployeesAreEqual(Employee a, Employee b)
         {
-            return A.WarehouseId == B.WarehouseId
-                   && A.Name == B.Name
-                   && A.role == B.role
-                   && A.ext == B.ext;
+            return a.WarehouseId == b.WarehouseId
+                   && a.Name == b.Name
+                   && a.Role == b.Role
+                   && a.Ext == b.Ext;
         }
     }
 }

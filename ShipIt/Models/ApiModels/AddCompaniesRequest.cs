@@ -4,6 +4,6 @@ namespace ShipIt.Models.ApiModels
 {
     public class AddCompaniesRequest
     {
-        public List<Company> companies { get; set; }
+        public List<Company> Companies { get; set; }
     }
 }

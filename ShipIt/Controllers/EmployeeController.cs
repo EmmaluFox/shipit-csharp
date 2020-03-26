@@ -10,34 +10,34 @@ namespace ShipIt.Controllers
 {
     public class EmployeeController : ApiController
     {
-        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly IEmployeeRepository employeeRepository;
+        private readonly IEmployeeRepository _employeeRepository;
 
         public EmployeeController(IEmployeeRepository employeeRepository)
         {
-            this.employeeRepository = employeeRepository;
+            this._employeeRepository = employeeRepository;
         }
 
         public EmployeeResponse Get(string name)
         {
-            log.Info(string.Format("Looking up employee by name: {0}", name));
+            Log.Info($"Looking up employee by name: {name}");
 
-            var employee = new Employee(employeeRepository.GetEmployeeByName(name));
+            var employee = new Employee(_employeeRepository.GetEmployeeByName(name));
 
-            log.Info("Found employee: " + employee);
+            Log.Info("Found employee: " + employee);
             return new EmployeeResponse(employee);
         }
 
         public EmployeeResponse Get(int warehouseId)
         {
-            log.Info(string.Format("Looking up employee by id: {0}", warehouseId));
+            Log.Info($"Looking up employee by id: {warehouseId}");
 
-            var employees = employeeRepository
+            var employees = _employeeRepository
                 .GetEmployeesByWarehouseId(warehouseId)
                 .Select(e => new Employee(e));
 
-            log.Info(string.Format("Found employees: {0}", employees));
+            Log.Info($"Found employees: {employees}");
 
             return new EmployeeResponse(employees);
         }
@@ -48,11 +48,11 @@ namespace ShipIt.Controllers
 
             if (employeesToAdd.Count == 0) throw new MalformedRequestException("Expected at least one <employee> tag");
 
-            log.Info("Adding employees: " + employeesToAdd);
+            Log.Info("Adding employees: " + employeesToAdd);
 
-            employeeRepository.AddEmployees(employeesToAdd);
+            _employeeRepository.AddEmployees(employeesToAdd);
 
-            log.Debug("Employees added successfully");
+            Log.Debug("Employees added successfully");
 
             return new Response {Success = true};
         }
@@ -64,7 +64,7 @@ namespace ShipIt.Controllers
 
             try
             {
-                employeeRepository.RemoveEmployee(name);
+                _employeeRepository.RemoveEmployee(name);
             }
             catch (NoSuchEntityException)
             {

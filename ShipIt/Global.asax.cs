@@ -10,17 +10,17 @@ namespace ShipIt
 {
     public class Global : HttpApplication
     {
-        private readonly IWindsorContainer container;
+        private readonly IWindsorContainer _container;
 
         public Global()
         {
-            container =
+            _container =
                 new WindsorContainer(new XmlInterpreter(new ConfigResource("castle")));
         }
 
         public override void Dispose()
         {
-            container.Dispose();
+            _container.Dispose();
             base.Dispose();
         }
 
@@ -29,7 +29,7 @@ namespace ShipIt
             WebApiConfig.Register(GlobalConfiguration.Configuration);
             GlobalConfiguration.Configuration.Services.Replace(
                 typeof(IHttpControllerActivator),
-                new WindsorCompositionRoot(container));
+                new WindsorCompositionRoot(_container));
             GlobalConfiguration.Configuration.Formatters.Remove(GlobalConfiguration.Configuration.Formatters
                 .JsonFormatter);
         }

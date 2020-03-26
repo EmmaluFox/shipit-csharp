@@ -12,119 +12,119 @@ namespace ShipItTest
     [TestClass]
     public class OutboundOrderControllerTests : AbstractBaseTest
     {
-        private const string GTIN = "0000";
+        private const string Gtin = "0000";
 
-        private static readonly Employee EMPLOYEE = new EmployeeBuilder().CreateEmployee();
-        private static readonly Company COMPANY = new CompanyBuilder().CreateCompany();
-        private static readonly int WAREHOUSE_ID = EMPLOYEE.WarehouseId;
-        private readonly CompanyRepository companyRepository = new CompanyRepository();
-        private readonly EmployeeRepository employeeRepository = new EmployeeRepository();
+        private static readonly Employee Employee = new EmployeeBuilder().CreateEmployee();
+        private static readonly Company Company = new CompanyBuilder().CreateCompany();
+        private static readonly int WarehouseId = Employee.WarehouseId;
+        private readonly CompanyRepository _companyRepository = new CompanyRepository();
+        private readonly EmployeeRepository _employeeRepository = new EmployeeRepository();
 
-        private readonly OutboundOrderController outboundOrderController = new OutboundOrderController(
+        private readonly OutboundOrderController _outboundOrderController = new OutboundOrderController(
             new StockRepository(),
             new ProductRepository()
         );
 
-        private Product product;
-        private int productId;
-        private readonly ProductRepository productRepository = new ProductRepository();
-        private readonly StockRepository stockRepository = new StockRepository();
+        private Product _product;
+        private int _productId;
+        private readonly ProductRepository _productRepository = new ProductRepository();
+        private readonly StockRepository _stockRepository = new StockRepository();
 
-        public new void onSetUp()
+        public new void OnSetUp()
         {
-            base.onSetUp();
-            employeeRepository.AddEmployees(new List<Employee> {EMPLOYEE});
-            companyRepository.AddCompanies(new List<Company> {COMPANY});
-            var productDataModel = new ProductBuilder().setGtin(GTIN).CreateProductDatabaseModel();
-            productRepository.AddProducts(new List<ProductDataModel> {productDataModel});
-            product = new Product(productRepository.GetProductByGtin(GTIN));
-            productId = product.Id;
+            base.OnSetUp();
+            _employeeRepository.AddEmployees(new List<Employee> {Employee});
+            _companyRepository.AddCompanies(new List<Company> {Company});
+            var productDataModel = new ProductBuilder().SetGtin(Gtin).CreateProductDatabaseModel();
+            _productRepository.AddProducts(new List<ProductDataModel> {productDataModel});
+            _product = new Product(_productRepository.GetProductByGtin(Gtin));
+            _productId = _product.Id;
         }
 
         [TestMethod]
         public void TestOutboundOrder()
         {
-            onSetUp();
-            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration> {new StockAlteration(productId, 10)});
+            OnSetUp();
+            _stockRepository.AddStock(WarehouseId, new List<StockAlteration> {new StockAlteration(_productId, 10)});
             var outboundOrder = new OutboundOrderRequestModel
             {
-                WarehouseId = WAREHOUSE_ID,
+                WarehouseId = WarehouseId,
                 OrderLines = new List<OrderLine>
                 {
                     new OrderLine
                     {
-                        gtin = GTIN,
-                        quantity = 3
+                        Gtin = Gtin,
+                        Quantity = 3
                     }
                 }
             };
 
-            outboundOrderController.Post(outboundOrder);
+            _outboundOrderController.Post(outboundOrder);
 
             var stock =
-                stockRepository.GetStockByWarehouseAndProductIds(WAREHOUSE_ID, new List<int> {productId})[productId];
-            Assert.AreEqual(stock.held, 7);
+                _stockRepository.GetStockByWarehouseAndProductIds(WarehouseId, new List<int> {_productId})[_productId];
+            Assert.AreEqual(stock.Held, 7);
         }
 
         [TestMethod]
         public void TestOutboundOrderInsufficientStock()
         {
-            onSetUp();
-            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration> {new StockAlteration(productId, 10)});
+            OnSetUp();
+            _stockRepository.AddStock(WarehouseId, new List<StockAlteration> {new StockAlteration(_productId, 10)});
             var outboundOrder = new OutboundOrderRequestModel
             {
-                WarehouseId = WAREHOUSE_ID,
+                WarehouseId = WarehouseId,
                 OrderLines = new List<OrderLine>
                 {
                     new OrderLine
                     {
-                        gtin = GTIN,
-                        quantity = 11
+                        Gtin = Gtin,
+                        Quantity = 11
                     }
                 }
             };
 
             try
             {
-                outboundOrderController.Post(outboundOrder);
+                _outboundOrderController.Post(outboundOrder);
                 Assert.Fail("Expected exception to be thrown.");
             }
             catch (InsufficientStockException e)
             {
-                Assert.IsTrue(e.Message.Contains(GTIN));
+                Assert.IsTrue(e.Message.Contains(Gtin));
             }
         }
 
         [TestMethod]
         public void TestOutboundOrderStockNotHeld()
         {
-            onSetUp();
-            var noStockGtin = GTIN + "XYZ";
-            productRepository.AddProducts(new List<ProductDataModel>
-                {new ProductBuilder().setGtin(noStockGtin).CreateProductDatabaseModel()});
-            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration> {new StockAlteration(productId, 10)});
+            OnSetUp();
+            var noStockGtin = Gtin + "XYZ";
+            _productRepository.AddProducts(new List<ProductDataModel>
+                {new ProductBuilder().SetGtin(noStockGtin).CreateProductDatabaseModel()});
+            _stockRepository.AddStock(WarehouseId, new List<StockAlteration> {new StockAlteration(_productId, 10)});
 
             var outboundOrder = new OutboundOrderRequestModel
             {
-                WarehouseId = WAREHOUSE_ID,
+                WarehouseId = WarehouseId,
                 OrderLines = new List<OrderLine>
                 {
                     new OrderLine
                     {
-                        gtin = GTIN,
-                        quantity = 8
+                        Gtin = Gtin,
+                        Quantity = 8
                     },
                     new OrderLine
                     {
-                        gtin = noStockGtin,
-                        quantity = 1000
+                        Gtin = noStockGtin,
+                        Quantity = 1000
                     }
                 }
             };
 
             try
             {
-                outboundOrderController.Post(outboundOrder);
+                _outboundOrderController.Post(outboundOrder);
                 Assert.Fail("Expected exception to be thrown.");
             }
             catch (InsufficientStockException e)
@@ -137,30 +137,30 @@ namespace ShipItTest
         [TestMethod]
         public void TestOutboundOrderBadGtin()
         {
-            onSetUp();
-            var badGtin = GTIN + "XYZ";
+            OnSetUp();
+            var badGtin = Gtin + "XYZ";
 
             var outboundOrder = new OutboundOrderRequestModel
             {
-                WarehouseId = WAREHOUSE_ID,
+                WarehouseId = WarehouseId,
                 OrderLines = new List<OrderLine>
                 {
                     new OrderLine
                     {
-                        gtin = GTIN,
-                        quantity = 1
+                        Gtin = Gtin,
+                        Quantity = 1
                     },
                     new OrderLine
                     {
-                        gtin = badGtin,
-                        quantity = 1
+                        Gtin = badGtin,
+                        Quantity = 1
                     }
                 }
             };
 
             try
             {
-                outboundOrderController.Post(outboundOrder);
+                _outboundOrderController.Post(outboundOrder);
                 Assert.Fail("Expected exception to be thrown.");
             }
             catch (NoSuchEntityException e)
@@ -172,34 +172,34 @@ namespace ShipItTest
         [TestMethod]
         public void TestOutboundOrderDuplicateGtins()
         {
-            onSetUp();
-            stockRepository.AddStock(WAREHOUSE_ID, new List<StockAlteration> {new StockAlteration(productId, 10)});
+            OnSetUp();
+            _stockRepository.AddStock(WarehouseId, new List<StockAlteration> {new StockAlteration(_productId, 10)});
             var outboundOrder = new OutboundOrderRequestModel
             {
-                WarehouseId = WAREHOUSE_ID,
+                WarehouseId = WarehouseId,
                 OrderLines = new List<OrderLine>
                 {
                     new OrderLine
                     {
-                        gtin = GTIN,
-                        quantity = 1
+                        Gtin = Gtin,
+                        Quantity = 1
                     },
                     new OrderLine
                     {
-                        gtin = GTIN,
-                        quantity = 1
+                        Gtin = Gtin,
+                        Quantity = 1
                     }
                 }
             };
 
             try
             {
-                outboundOrderController.Post(outboundOrder);
+                _outboundOrderController.Post(outboundOrder);
                 Assert.Fail("Expected exception to be thrown.");
             }
             catch (ValidationException e)
             {
-                Assert.IsTrue(e.Message.Contains(GTIN));
+                Assert.IsTrue(e.Message.Contains(Gtin));
             }
         }
     }

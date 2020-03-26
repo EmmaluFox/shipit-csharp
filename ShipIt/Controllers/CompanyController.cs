@@ -9,40 +9,40 @@ namespace ShipIt.Controllers
 {
     public class CompanyController : ApiController
     {
-        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly ICompanyRepository companyRepository;
+        private readonly ICompanyRepository _companyRepository;
 
         public CompanyController(ICompanyRepository companyRepository)
         {
-            this.companyRepository = companyRepository;
+            this._companyRepository = companyRepository;
         }
 
         public CompanyResponse Get(string gcp)
         {
             if (gcp == null) throw new MalformedRequestException("Unable to parse gcp from request parameters");
 
-            log.Info(string.Format("Looking up company by name: {0}", gcp));
+            Log.Info($"Looking up company by name: {gcp}");
 
-            var companyDataModel = companyRepository.GetCompany(gcp);
+            var companyDataModel = _companyRepository.GetCompany(gcp);
             var company = new Company(companyDataModel);
 
-            log.Info("Found company: " + company);
+            Log.Info("Found company: " + company);
 
             return new CompanyResponse(company);
         }
 
         public Response Post([FromBody] AddCompaniesRequest requestModel)
         {
-            var companiesToAdd = requestModel.companies;
+            var companiesToAdd = requestModel.Companies;
 
             if (companiesToAdd.Count == 0) throw new MalformedRequestException("Expected at least one <company> tag");
 
-            log.Info("Adding companies: " + companiesToAdd);
+            Log.Info("Adding companies: " + companiesToAdd);
 
-            companyRepository.AddCompanies(companiesToAdd);
+            _companyRepository.AddCompanies(companiesToAdd);
 
-            log.Debug("Companies added successfully");
+            Log.Debug("Companies added successfully");
 
             return new Response {Success = true};
         }

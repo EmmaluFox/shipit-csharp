@@ -17,7 +17,7 @@ namespace ShipItTest
             return new NpgsqlConnection(ConfigurationManager.ConnectionStrings["MyPostgres"].ConnectionString);
         }
 
-        public void onSetUp()
+        public void OnSetUp()
         {
             // Start from a clean slate
             var sql =

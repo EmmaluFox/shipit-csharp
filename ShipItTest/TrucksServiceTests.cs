@@ -47,12 +47,13 @@ namespace ShipItTest
         {
             var alterations = new List<StockAlteration>
             {
-                new StockAlteration(17, 61)
+                new StockAlteration(17, 21)
             };
 
             var trucks2 = _trucksService.GetTrucksForOrder(alterations);
-            Assert.AreEqual(4, trucks2.NumberOfTrucks);
-            Assert.AreEqual( 2000, trucks2.Trucks[2].TotalWeight);
+            Assert.AreEqual(2, trucks2.NumberOfTrucks);
+            Assert.AreEqual( 2000, trucks2.Trucks[0].TotalWeight);
+         
         }
     }
 }

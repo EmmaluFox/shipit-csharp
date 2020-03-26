@@ -5,67 +5,67 @@ namespace ShipItTest.Builders
 {
     public class CompanyBuilder
     {
-        private string Addr2 = "1800 West Central";
-        private string Addr3 = "";
-        private string Addr4 = "IL";
-        private string City = "Mount Prospect";
-        private string Gcp = "0000346";
-        private string Mail = "info@gs1us.org";
-        private string Name = "Robert Bosch Tool Corporation";
-        private string PostalCode = "60056";
-        private string Tel = "(224) 232-2407";
+        private string _addr2 = "1800 West Central";
+        private string _addr3 = "";
+        private string _addr4 = "IL";
+        private string _city = "Mount Prospect";
+        private string _gcp = "0000346";
+        private string _mail = "info@gs1us.org";
+        private string _name = "Robert Bosch Tool Corporation";
+        private string _postalCode = "60056";
+        private string _tel = "(224) 232-2407";
 
-        public CompanyBuilder setGcp(string gcp)
+        public CompanyBuilder SetGcp(string gcp)
         {
-            Gcp = gcp;
+            _gcp = gcp;
             return this;
         }
 
-        public CompanyBuilder setName(string name)
+        public CompanyBuilder SetName(string name)
         {
-            Name = name;
+            _name = name;
             return this;
         }
 
-        public CompanyBuilder setAddr2(string addr2)
+        public CompanyBuilder SetAddr2(string addr2)
         {
-            Addr2 = addr2;
+            _addr2 = addr2;
             return this;
         }
 
-        public CompanyBuilder setAddr3(string addr3)
+        public CompanyBuilder SetAddr3(string addr3)
         {
-            Addr3 = addr3;
+            _addr3 = addr3;
             return this;
         }
 
-        public CompanyBuilder setAddr4(string addr4)
+        public CompanyBuilder SetAddr4(string addr4)
         {
-            Addr4 = addr4;
+            _addr4 = addr4;
             return this;
         }
 
-        public CompanyBuilder setPostalCode(string postalCode)
+        public CompanyBuilder SetPostalCode(string postalCode)
         {
-            PostalCode = postalCode;
+            _postalCode = postalCode;
             return this;
         }
 
-        public CompanyBuilder setCity(string city)
+        public CompanyBuilder SetCity(string city)
         {
-            City = city;
+            _city = city;
             return this;
         }
 
-        public CompanyBuilder setTel(string tel)
+        public CompanyBuilder SetTel(string tel)
         {
-            Tel = tel;
+            _tel = tel;
             return this;
         }
 
-        public CompanyBuilder setMail(string mail)
+        public CompanyBuilder SetMail(string mail)
         {
-            Mail = mail;
+            _mail = mail;
             return this;
         }
 
@@ -73,15 +73,15 @@ namespace ShipItTest.Builders
         {
             return new Company
             {
-                Gcp = Gcp,
-                Name = Name,
-                Addr2 = Addr2,
-                Addr3 = Addr3,
-                Addr4 = Addr4,
-                PostalCode = PostalCode,
-                City = City,
-                Tel = Tel,
-                Mail = Mail
+                Gcp = _gcp,
+                Name = _name,
+                Addr2 = _addr2,
+                Addr3 = _addr3,
+                Addr4 = _addr4,
+                PostalCode = _postalCode,
+                City = _city,
+                Tel = _tel,
+                Mail = _mail
             };
         }
 
@@ -89,19 +89,19 @@ namespace ShipItTest.Builders
         {
             return new AddCompaniesRequest
             {
-                companies = new List<Company>
+                Companies = new List<Company>
                 {
                     new Company
                     {
-                        Gcp = Gcp,
-                        Name = Name,
-                        Addr2 = Addr2,
-                        Addr3 = Addr3,
-                        Addr4 = Addr4,
-                        PostalCode = PostalCode,
-                        City = City,
-                        Tel = Tel,
-                        Mail = Mail
+                        Gcp = _gcp,
+                        Name = _name,
+                        Addr2 = _addr2,
+                        Addr3 = _addr3,
+                        Addr4 = _addr4,
+                        PostalCode = _postalCode,
+                        City = _city,
+                        Tel = _tel,
+                        Mail = _mail
                     }
                 }
             };

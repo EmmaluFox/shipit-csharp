@@ -2,7 +2,7 @@
 {
     public class MalformedRequestException : ClientVisibleException
     {
-        public MalformedRequestException(string message) : base(message, ErrorCode.MALFORMED_REQUEST)
+        public MalformedRequestException(string message) : base(message, ErrorCode.MalformedRequest)
         {
         }
 
