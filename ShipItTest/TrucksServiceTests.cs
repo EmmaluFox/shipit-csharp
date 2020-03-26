@@ -47,7 +47,7 @@ namespace ShipItTest
         {
             var alterations = new List<StockAlteration>
             {
-                new StockAlteration(17, 21)
+                new StockAlteration(17, 20)
             };
 
             var trucks2 = _trucksService.GetTrucksForOrder(alterations);
