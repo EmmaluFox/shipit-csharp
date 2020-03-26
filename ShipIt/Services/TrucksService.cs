@@ -26,21 +26,10 @@ namespace ShipIt.Services
 
         public OutboundOrderResponse GetTrucksForOrder(List<StockAlteration> lineItems)
         {
-            if (lineItems.Count == 0)
-            {
-                throw new MalformedRequestException("Order must contain at least one line");
-            }
-
             var outboundOrder = new OutboundOrderResponse();
-            var truckList = new List<Truck>();
+            var cases = GetFilledCases(lineItems);
+            var truckList = GetTrucksFromLoadingBay(cases);
             outboundOrder.Trucks = truckList;
-            for (var i = 0; i < lineItems.Count; i++)
-            {
-                var truckX = GetTruckFromLoadingBay(GetFilledCases(lineItems));
-                truckX.Id = i;
-                truckList.Add(truckX);
-            }
-
             return outboundOrder;
         }
 
@@ -51,10 +40,10 @@ namespace ShipIt.Services
             {
                 var newProduct = new Product(_productRepository.GetProductById(item.ProductId));
                 var orderWeight = item.Quantity * newProduct.Weight;
-                int maxQuantityPerCase = (int) (2000 / newProduct.Weight);
-                var caseWeight = maxQuantityPerCase * newProduct.Weight;
+                var caseWeight = newProduct.MaxItemsPerCase * newProduct.Weight;
                 var fullCasesRequired = orderWeight - (orderWeight % caseWeight) / caseWeight;
-                int partFilledCaseItemQuantity = (int) (item.Quantity - (maxQuantityPerCase * fullCasesRequired));
+                int partFilledCaseItemQuantity =
+                    (int) (item.Quantity - (newProduct.MaxItemsPerCase * fullCasesRequired));
 
                 foreach (var caseItem in cases)
                 {
@@ -63,7 +52,7 @@ namespace ShipIt.Services
                         var newFullCase = new Case
                         {
                             Gtin = newProduct.Gtin,
-                            Quantity = maxQuantityPerCase,
+                            Quantity = newProduct.MaxItemsPerCase,
                             Name = newProduct.Name,
                             WeightPerItem = newProduct.Weight
                         };
@@ -72,15 +61,15 @@ namespace ShipIt.Services
 
                     if (newProduct.Gtin == caseItem.Gtin && partFilledCaseItemQuantity > 0)
                     {
-                        if (partFilledCaseItemQuantity + caseItem.Quantity < maxQuantityPerCase)
+                        if (partFilledCaseItemQuantity + caseItem.Quantity < newProduct.MaxItemsPerCase)
                         {
                             caseItem.Quantity += partFilledCaseItemQuantity;
                         }
                         else
                         {
-                            var remainingItemSpace = maxQuantityPerCase - caseItem.Quantity;
+                            var remainingItemSpace = newProduct.MaxItemsPerCase - caseItem.Quantity;
                             var leftOver = partFilledCaseItemQuantity - remainingItemSpace;
-                            caseItem.Quantity = maxQuantityPerCase;
+                            caseItem.Quantity = newProduct.MaxItemsPerCase;
                             var newPartFilledCase = new Case()
                             {
                                 Gtin = newProduct.Gtin,
@@ -93,17 +82,40 @@ namespace ShipIt.Services
                     }
                 }
             }
+
             return cases;
         }
-        static Truck GetTruckFromLoadingBay(List<Case> unloadedCases)
+
+        static List<Truck> GetTrucksFromLoadingBay(List<Case> unloadedCases)
         {
-            var truck = new Truck();
-            var caseLoad = new List<Case>();
-            var caseLoadTotalWeight = caseLoad.Sum(load => load.TotalWeight);
-            caseLoad.AddRange(unloadedCases.Where(uniqueCase =>
-                uniqueCase.TotalWeight + caseLoadTotalWeight < 2001));
-            truck.Cases = caseLoad;
-            return truck;
+            var truckList = new List<Truck>();
+            List<Case> fullCases = new List<Case>();
+            List<Case> partFilledCases = new List<Case>();
+            foreach (var unloadedCase in unloadedCases)
+            {
+                Product product = new Product() {Gtin = unloadedCase.Gtin};
+                if (unloadedCase.Quantity == product.MaxItemsPerCase)
+                {
+                    fullCases.Add(unloadedCase);
+                }
+                else
+                {
+                    partFilledCases.Add(unloadedCase);
+                }
+
+                int i = 1;
+                foreach (var fullCase in fullCases)
+                {
+                    var truck = new Truck() {Id = i};
+                    truck.Cases.Add(fullCase);
+                    truckList.Add(truck);
+                }
+            }
+
+            // truck.Cases.AddRange(unloadedCases.Where(uniqueCase =>
+                //     uniqueCase.TotalWeight + truck.TotalWeight < 2001));
+                return truckList;
+            }
         }
     }
-}
+
